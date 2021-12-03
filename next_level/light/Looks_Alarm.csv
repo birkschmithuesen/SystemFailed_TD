@@ -1,0 +1,41 @@
+﻿name	color	beam	focus 	activation type	Look	intensity
+highlight friendly	60	60	120	tbc	magenta, narrow, Fade in&out	
+highlight warning	40	40	120	40	red, slow strobe, narrow, no Fade	
+highlight critical	40	80	120	40	red, fast strobe, narrow, no fade	
+performer	60	60	160	40	violet, flood	
+winner	80	60	120	40	gold, flood	
+evaluation	80	60	120	40	gold, narrow	
+alarm						
+						
+						
+						
+						
+						
+						
+						
+						
+						
+						
+						
+						
+						
+						
+						
+						
+						
+						
+						
+						
+						
+						
+						
+						
+						
+						
+						
+						
+						
+						
+						
+						
+						
