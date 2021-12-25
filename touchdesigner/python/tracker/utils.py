@@ -23,37 +23,62 @@ class Utils:
 		self.EmptySlots = set(range(1,51))
 		self.UnassignedIds = list()
 
+	def Reassign(self):
+		self.EmptySlots = set(range(1,51))
+		ad = op('active_dat')
+		tmp = list(self.Assignment.keys())
+		for i in range(1,51):
+			tslot = op(f'tracker_{i}')
+			tslot.par.Trackid = 0
+			tslot.par.Active = 0
+		for tid in tmp:
+			self.Unassign(tid)
+		for row in ad.rows():
+			tid = row[0].val
+			debug(tid)
+			self.Assign(int(tid))
+
 	def ResolveID(self, tid):
 		try:
 			return self.Assignment[tid]
 		except KeyError:
 			return False
 
-	def AssignTracker(self, tid):
-		if len(self.EmptySlots) <= 0:
-			debug(f"unable to add tracker for id {tid} - no unassigned slots")
-			return -1
+	def Assign(self, tid):
 		slot = self.ResolveID(tid)
 		if not slot:
-			slot = EmptySlots.pop(0)
-			Assignment[tid] = slot
-			tracker = self.ownerComp.op(f'tracker_{slot}')
-			#TODO use an actual activation&deactivation method on the tracker
-			tracker.par.Active = True
-			tracker.par.Trackid = tid
+			if len(self.EmptySlots) <= 0:
+				debug(f"unable to add tracker for id {tid} - no unassigned slots")
+				slot = -1
+			else:
+				slot = self.EmptySlots.pop()
+				self.Assignment[tid] = slot
+				tracker = self.ownerComp.op(f'tracker_{slot}')
+				tracker.par.Trackid = tid
+				self.Setup(slot)
+				debug(f'Assigned {tid} to {slot}')
 		return slot
 
-	def UnassignTracker(self, tid):
+	def Unassign(self, tid):
 		try:
-			slot = self.Assignment.pop(tid)
+			slot = self.Assignment.pop(int(tid))
 		except KeyError:
-			debug(f"Unassign {tid} failed - assignment not found")
-			slot = None
+			# debug(f"Unassign {tid} failed - assignment not found")
+			slot = -1
 		else:
-			EmptySlots.add(slot)
 			tracker = self.ownerComp.op(f'tracker_{slot}')
-			#TODO use an actual activation&deactivation method on the tracker
-			tracker.par.Active = False
 			tracker.par.Trackid = 0
+			self.Setup(slot)
+			self.EmptySlots.add(slot)
+			debug(f'Unassigned {tid} from {slot}')
 		finally:
 			return slot
+
+	def Setup(self, slot):
+		slot = int(slot)
+		tracker = self.ownerComp.op(f'tracker_{slot}')
+		tid = int(tracker.par.Trackid)
+		if tid:
+			tracker.par.Active = True
+		else:
+			tracker.par.Active = False
