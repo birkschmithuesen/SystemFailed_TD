@@ -44,7 +44,7 @@ class Utils:
 	def Assign(self, tid):
 		slot = self.ResolveID(tid)
 		if not slot:
-			debug(f"trying to assign {tid} to a new slot")
+			# debug(f"trying to assign {tid} to a new slot")
 			if len(self.EmptySlots) <= 0:
 				debug(f"unable to add tracker for id {tid} - no unassigned slots")
 				slot = -1
