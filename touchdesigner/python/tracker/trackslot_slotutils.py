@@ -72,10 +72,11 @@ class Slotutils:
 		pass
 
 	def SetParticipant(self):
+		debug(f'setting {self.ownerComp.par.Trackid} as participant')
 		slot = self.ownerComp
 		# slot.name = slot.par.Name
 		# slot.par.Active = False
-		for pagename in ['Position','Geometry','Score','Poll','Jail','Highlight','Scene']:
+		for pagename in ['Basic', 'Position', 'Geometry', 'Score', 'Poll', 'Jail', 'Highlight', 'Scene']:
 			self.ActivatePage(pagename)
 		pass
 

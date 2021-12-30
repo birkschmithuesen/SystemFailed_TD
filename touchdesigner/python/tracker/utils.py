@@ -69,25 +69,49 @@ class Utils:
 	def Setup(self, slot, tid):
 		slot = int(slot)
 		tid = int(tid)
-		
 		self.Assignment[tid] = slot
 
-		tracker = self.ownerComp.op(f'slot_{slot}')
+		trackList = self.ownerComp.findChildren(depth=1, maxDepth=1, parName='Slotid', key = lambda x: x.par.Slotid == slot)
+		tracker = trackList[0]
+
 		tracker.name = f'tracker_{tid}'
 		tracker.par.Trackid = tid
 		tracker.par.opshortcut = f'tracker_{tid}'
 		tracker.par.Active = True
-		# tracker.par.play = True
-
+		
 	def Unset(self, slot, tid):
 		slot = int(slot)
 		tid = int(tid)
-		
+
 		tracker = self.ownerComp.op(f'tracker_{tid}')
-		tracker.name = f'slot_{slot}'
 		tracker.par.Trackid = 0
 		tracker.par.opshortcut = ''
 		tracker.par.Active = False
-		# tracker.par.play = False
-
 		self.EmptySlots.add(slot)
+
+	def FlagUpdate(self, trackslot):
+		pass
+
+	def SetInactive(self, trackslot):
+		pass
+
+	def SetPerformer(self, trackslot):
+		pass
+
+	def SetJail(self, trackslot):
+		pass
+
+	def SetParticipant(self, trackslot):
+		pass
+
+	def Reset(self):
+		pass
+
+	def RoundReset(self):
+		pass
+
+	def RoundStore(self):
+		pass
+
+	def RoundRemove(self):
+		pass
