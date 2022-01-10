@@ -44,16 +44,38 @@ class Utils:
 			self.ResetRoundtotal(tid)
 
 	def CaptureHighscore(self, trackid):
+		track = self.getTrack(trackid)
+		track.par.Capturehighscore.pulse()
 		pass
 
 	def CaptureHighscoreAll(self):
+		for tid in range(1,51):
+			self.CaptureHighscore(tid)		
 		pass
 
-	def StartRoundrecord(self):
+	def StartRoundrecord(self, trackid):
+		track = self.getTrack(trackid)
+		track.par.Startroundrecord.pulse()
 		pass
 
-	def StopRoundrecord(self):
+	def StartRoundrecordAll(self):
+		for tid in range(1,51):
+			self.StartRoundrecord(tid)
+
+	def StopRoundrecord(self, trackid):
+		track = self.getTrack(trackid)
+		track.par.Stoproundrecord.pulse()
 		pass
 
-	def ResetRoundrecord(self):
+	def StopRoundrecordAll(self):
+		for tid in range(1,51):
+			self.StopRoundrecord(tid)
+
+	def ResetRoundrecord(self, trackid):
+		track = self.getTrack(trackid)
+		track.par.Resetroundrecord.pulse()
 		pass
+
+	def ResetRoundrecordAll(self):
+		for tid in range(1,51):
+			self.ResetRoundrecord(tid)
