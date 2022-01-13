@@ -24,7 +24,7 @@ class Utils:
 	Clear Assignments and recreate them based on current table
 	"""
 	def Reassign(self):
-		debug("reassign")
+		# debug("reassign")
 		self.Unassigned = set(range(1, 1 + self.MaxSlots))
 		self.Assignment = DependDict()
 		self.AssignmentTable.setSize(self.MaxSlots,1)
@@ -41,7 +41,7 @@ class Utils:
 	"""
 	def Assign(self, pid):
 		pid = int(pid)
-		debug(f'{me.name}: assign {pid}')
+		# debug(f'{me.name}: assign {pid}')
 		slot = self.Assignment.get(pid)
 		if not slot:
 			if len(self.Unassigned) <= 0:
