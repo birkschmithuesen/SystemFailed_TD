@@ -18,27 +18,39 @@ class Highscores:
 	def __init__(self, ownerComp):
 		# The component to which this extension is attached
 		self.ownerComp = ownerComp
-		self.Roundscores = DependDict()
+		self.list = op('score/highscores')
+		self.Highscoretotal = 0
 
-	def UpdateRound(self, ident, value):
-		# 0 < value < 100
-		try:
-			prev = int(self.Roundscores.get(ident, 0)) 
-		except TypeError:
+	def CaptureHighscore(self, ident):
+		ident = str(ident)
+		new = int(self.ownerComp.par.Score.eval())
+		prow = self.list.row(ident)
+		if prow:
+			prev = int(prow[1])
+		else:
+			self.list.appendRow([ident,0,0])
 			prev = -1
-		finally:
-			if prev < value:
-				self.Roundscores[ident] = value
-				return True
-			else:
-				return False
+		# if prev < new:
+		rated = new - 50
+		self.list.replaceRow(ident, [ident, new, rated])
+		self.ownerComp.par.Newhighscore.val =  new
+		self.UpdateHighscoretotal()
 
-	def Sum(self):
-		sum = 0
-		for val in self.Roundscores.values():
-			sum += val
-		return sum
+	def QueryHighscore(self, ident):
+		prow = self.list.row(ident)
+		if not prow:
+			return [ident,-1,0]
+		else:
+			return [prow[0], prow[1], prow[2]]
 
-	def Query(self, ident):
-		val = self.Roundscores.get(ident)
-		return val
+	def ClearHighscore(self):
+		self.list.clear(keepFirstRow=True)
+
+	def UpdateHighscoretotal(self):
+		tmp = 0
+		scores = self.list.col('highscore')
+		scores.pop(0)
+		for c in scores:
+			tmp += int(c.val)
+		self.Highscoretotal = tmp
+		self.ownerComp.par.Highscore.val = tmp
