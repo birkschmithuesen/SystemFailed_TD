@@ -45,6 +45,8 @@ class Highscores:
 
 	def ClearHighscore(self):
 		self.list.clear(keepFirstRow=True)
+		self.ownerComp.par.Highscore.val = 0
+		self.ownerComp.par.Newhighscore = 0
 
 	def UpdateHighscoretotal(self):
 		tmp = 0
