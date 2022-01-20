@@ -18,6 +18,8 @@ class Slotutils:
 	def __init__(self, ownerComp):
 		# The component to which this extension is attached
 		self.ownerComp = ownerComp
+		self.freezeop = ownerComp.op('freeze')
+		self.freezeop.par.Init.pulse()
 
 	def Flagupdate(self):
 		active = bool(self.ownerComp.par.Active.eval())
