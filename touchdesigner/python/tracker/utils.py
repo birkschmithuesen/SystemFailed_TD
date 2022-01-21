@@ -19,63 +19,39 @@ class Utils:
 			debug(f'{me}: could not get track for trackid: {trackid}')
 			return None
 
-	def Unstrike(self, trackid):
-		track = self.getTrack(trackid)
-		track.par.Unstrike.pulse()
+	def tracks(self, ref = 'raw'):
+		id_dat = self.ownerComp.op(f'{str(ref)}_id_dat')
+		refs = ['track_' + cell.val for cell in id_dat.row(0)]
+		tracks = ops(refs)
+		return tracks
 
-	def UnstrikeAll(self):
-		for tid in range(1,51):
-			self.Unstrike(tid)
+	def PassPulse(self, parname, trackid = -1):
+		if not (trackid == -1):
+			tracks = [self.getTrack(trackid)]
+		else:
+			tracks = self.tracks()
+		for track in tracks:
+			track.par[str(parname)].pulse()
 
-	def Unfreeze(self, trackid):
-		track = self.getTrack(trackid)
-		track.par.Unfreeze.pulse()
+	def SetVal(self, parname, value, trackid = -1):
+		if not (trackid == -1):
+			tracks = [self.getTrack(trackid)]
+		else:
+			tracks = self.tracks()
+		for track in tracks:
+			track.par[str(parname)].val = value
 
-	def UnfreezeAll(self):
-		for tid in range(1,51):
-			self.Unfreeze(tid)
 
-	def ResetRoundtotal(self, trackid):
-		track = self.getTrack(trackid)
-		track.par.Resetroundtotal.pulse()
-
-	def ResetRoundtotalAll(self):
-		for tid in range(1,51):
-			self.ResetRoundtotal(tid)
-
-	def CaptureHighscore(self, trackid):
-		track = self.getTrack(trackid)
-		track.par.Capturehighscore.pulse()
+	def StartRound(self):
+		#RESET STATE
+		PassPulse('Unfreeze')
+		PassPulse('Unstrike')
+		PassPulse('Unstrike')
+		PassPulse('Resetscore')
+		PassPulse('Resetrecord')
+		PassPulse('Startrecord')
 		pass
 
-	def CaptureHighscoreAll(self):
-		for tid in range(1,51):
-			self.CaptureHighscore(tid)		
-		pass
-
-	def StartRoundrecord(self, trackid):
-		track = self.getTrack(trackid)
-		track.par.Startroundrecord.pulse()
-		pass
-
-	def StartRoundrecordAll(self):
-		for tid in range(1,51):
-			self.StartRoundrecord(tid)
-
-	def StopRoundrecord(self, trackid):
-		track = self.getTrack(trackid)
-		track.par.Stoproundrecord.pulse()
-		pass
-
-	def StopRoundrecordAll(self):
-		for tid in range(1,51):
-			self.StopRoundrecord(tid)
-
-	def ResetRoundrecord(self, trackid):
-		track = self.getTrack(trackid)
-		track.par.Resetroundrecord.pulse()
-		pass
-
-	def ResetRoundrecordAll(self):
-		for tid in range(1,51):
-			self.ResetRoundrecord(tid)
+	def StopRound(self):
+		PassPulse('Capurehighscore')
+		PassPulse('Stoprecord')
