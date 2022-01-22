@@ -57,7 +57,7 @@ class Slotutils:
 
 	def Resetscore(self):
 		if not self.pars.Benched:
-			self.Scoreop.Roundreset()
+			self.Scoreop.par.Roundreset.pulse()
 			return self.pars.Score
 		return 0
 
@@ -74,9 +74,9 @@ class Slotutils:
 		pass
 
 	def SetFreeze(self):
-		self.freezeop.Forcefreeze()
+		self.Freezeop.par.Forcefreeze.pulse()
 		pass
 	
 	def Unfreeze(self):
-		op('./freeze').par.Unfreeze.pulse()
+		self.Freezeop.par.Unfreeze.pulse()
 		pass
