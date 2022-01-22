@@ -13,12 +13,23 @@ class Utils:
 	"""
 	def __init__(self, ownerComp):
 		self.ownerComp = ownerComp
-		
 		self.MaxSlots = op.Settings.par.Maxtracks
-		self.PharusTable = op('assign_dat_clean')
+		self.Pharus = op('ordered_pharus_set')
 		self.Unassigned = set(range(1, 1 + self.MaxSlots))
-		self.Assignment = DependDict()
+		self.Assignment = dict()
 		self.AssignmentTable = op('assignment')
+
+	"""
+	Update to a given pharus id set without changing existing assigns
+	"""
+	def Update(self, ids):
+		for pid in ids:
+			parent().Assign(pid)
+		tmp = self.Assignment.copy()
+		for aid in tmp:
+			if not aid in ids:
+				self.Unassign(aid) 
+
 
 	"""
 	Clear Assignments and recreate them based on current table
@@ -26,15 +37,13 @@ class Utils:
 	def Reassign(self):
 		# debug("reassign")
 		self.Unassigned = set(range(1, 1 + self.MaxSlots))
-		self.Assignment = DependDict()
+		self.Assignment = dict()
 		self.AssignmentTable.setSize(self.MaxSlots,1)
 		for row in self.AssignmentTable.rows():
 			row[0].val = '0'
-		for row in self.PharusTable.rows():
-			pid = row[0].val
-			state = row[1].val
-			if state:
-				self.Assign(pid)
+		for cell in self.Pharus.col(0):
+			pid = cell.val
+			self.Assign(pid)
 
 	"""
 	Set up an assignment and publish it

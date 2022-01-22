@@ -62,12 +62,15 @@ class Slotutils:
 		return 0
 
 	def Resetrecord(self):
+		self.Recorderop.par.Resetrecord.pulse()
 		pass
 
 	def Startrecord(self):
+		self.Recorderop.par.Startrecord.pulse()
 		pass
 
 	def Stoprecord(self):
+		self.Recorderop.par.Stoprecord.pulse()
 		pass
 
 	def SetFreeze(self):
