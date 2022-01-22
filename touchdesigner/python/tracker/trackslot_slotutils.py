@@ -18,15 +18,22 @@ class Slotutils:
 	def __init__(self, ownerComp):
 		# The component to which this extension is attached
 		self.ownerComp = ownerComp
-		self.freezeop = ownerComp.op('freeze')
-		self.freezeop.par.Init.pulse()
+		self.pars = ownerComp.par
+		self.Freezeop = ownerComp.op('freeze')
+		self.Freezeop.par.Init.pulse()
+		self.Scoreop = ownerComp.op('score')
+		self.Recorderop = ownerComp.op('recorder')
+		self.Neighboursop = ownerComp.op('neighbours')
+
+	def Reset(self):
+		pass
 
 	def Flagupdate(self):
 		active = bool(self.ownerComp.par.Active.eval())
 		performer = bool(self.ownerComp.par.Performer.eval())
 		freeze = bool(self.ownerComp.par.Freeze.eval())
 		if not active:
-			self.SetInactive()
+			self.SetActive(False)
 		elif performer:
 			self.SetPerformer()
 		elif freeze:
@@ -34,26 +41,25 @@ class Slotutils:
 		else:
 			self.SetParticipant()
 
-	def SetInactive(self):
-		self.ownerComp.Reset()
-		self.ownerComp.par.Timestamp.val = 0
+	def SetActive(self, val=True):
+		if val:
+			self.ownerComp.Timestamp.val = absTime.seconds
+		else:
+			self.ownerComp.Logofftime.val = absTime.seconds
+			self.ownerComp.Reset()
 		pass
 
-	def SetPerformer(self):
-		slot = self.ownerComp
+	def SetPerformer(self, val=True):
 		pass
 
-	def SetJail(self):
-		pass
-
-	def SetParticipant(self):
-		pass
-
-	def Reset(self):
+	def SetParticipant(self, val=True):
 		pass
 
 	def Resetscore(self):
-		pass
+		if not self.pars.Benched:
+			self.Scoreop.Roundreset()
+			return self.pars.Score
+		return 0
 
 	def Resetrecord(self):
 		pass
@@ -65,9 +71,9 @@ class Slotutils:
 		pass
 
 	def SetFreeze(self):
-		op('./freeze').par.Forcefreeze.pulse()
+		self.freezeop.Forcefreeze()
 		pass
 	
 	def Unfreeze(self):
 		op('./freeze').par.Unfreeze.pulse()
-		pass	
+		pass
