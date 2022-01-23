@@ -34,6 +34,7 @@ class Utils:
 			track.par[str(parname)].pulse()
 
 	def SetVal(self, parname, value, trackid = -1):
+		debug(f'SetVal: {parname}, {value}')
 		if not (trackid == -1):
 			tracks = [self.getTrack(trackid)]
 		else:
@@ -44,14 +45,30 @@ class Utils:
 
 	def StartRound(self):
 		#RESET STATE
-		PassPulse('Unfreeze')
-		PassPulse('Unstrike')
-		PassPulse('Unstrike')
-		PassPulse('Resetscore')
-		PassPulse('Resetrecord')
-		PassPulse('Startrecord')
+		self.PassPulse('Unfreeze')
+		self.PassPulse('Unstrike')
+		self.PassPulse('Unstrike')
+		self.PassPulse('Resetscore')
+		self.PassPulse('Resetrecord')
+		self.PassPulse('Startrecord')
+		self.SetVal('Timestop', 0)
+		pass
+
+	def PauseRound(self):
+		self.SetVal('Timestop', 1)
+		pass
+
+	def ResumeRound(self):
+		self.SetVal('Timestop', 0)
 		pass
 
 	def StopRound(self):
-		PassPulse('Capurehighscore')
-		PassPulse('Stoprecord')
+		self.SetVal('Timestop', 1)
+		self.PassPulse('Capturehighscore')
+		self.PassPulse('Stoprecord')
+		self.PassPulse('Unfreeze')
+		self.PassPulse('Unstrike')
+	
+	def EvaluateRound(self):
+		#TRIGGER EVAL CALLOUT TIMER
+		pass

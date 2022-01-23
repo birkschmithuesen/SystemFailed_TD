@@ -26,6 +26,10 @@ class Slotutils:
 		self.Neighboursop = ownerComp.op('neighbours')
 
 	def Reset(self):
+		self.Freezeop.par.Reset.pulse()
+		self.Scoreop.par.Roundreset.pulse()
+		self.Scoreop.par.Highscorereset.pulse()
+		self.Recorderop.par.Resetrecord.pulse()
 		pass
 
 	def Flagupdate(self):
