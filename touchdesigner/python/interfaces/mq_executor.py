@@ -12,7 +12,7 @@ def onValueChange(par, prev):
 # The changes are a list of named tuples, where each tuple is (Par, previous value)
 def onValuesChanged(changes):	
 	osc = parent.Guide.op('./oscout')
-	gid = parent.mqguide.par.Guideid
+	gid = parent.mqguide.par.Guideid.eval() -1
 	table = op('cue_table')
 
 	for c in changes:
@@ -32,9 +32,9 @@ def onValuesChanged(changes):
 			#new cue, send full look
 			cue = par.eval()
 			level = (float(table[str(cue),'Intensity'].val)/100) * float(parent.mqguide.par.Level.eval())
-			color = op('cue_table')[str(cue),'Color'].val
-			beam = op('cue_table')[str(cue),'Beam'].val
-			shutter = op('cue_table')[str(cue),'Shutter'].val
+			color = int(op('cue_table')[str(cue),'Color'].val) + gid
+			beam = int(op('cue_table')[str(cue),'Beam'].val) + gid
+			shutter = int(op('cue_table')[str(cue),'Shutter'].val) + gid
 			color_ex = f'/exec/14/{color}'
 			beam_ex = f'/exec/12/{beam}'
 			shut_ex = f'/exec/12/{shutter}'
