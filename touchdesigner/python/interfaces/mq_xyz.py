@@ -1,19 +1,25 @@
 # me - this DAT
-# par - the Par object that has changed
-# val - the current value
-# prev - the previous value
 # 
-# Make sure the corresponding toggle is enabled in the Parameter Execute DAT.
+# frame - the current frame
+# state - True if the timeline is paused
+# 
+# Make sure the corresponding toggle is enabled in the Execute DAT.
 
-def onValueChange(par, prev):
-	# use par.eval() to get current value
+def onStart():
 	return
 
-# Called at end of frame with complete list of individual parameter changes.
-# The changes are a list of named tuples, where each tuple is (Par, previous value)
-def onValuesChanged(changes):
+def onCreate():
+	return
+
+def onExit():
+	return
+
+def onFrameStart(frame):
+	return
+
+def onFrameEnd(frame):
 	mqSender = parent.Guide.op('./mqout')
-	pars = parent.guideslot.par
+	pars = parent.mqguide.par
 	tid = int(pars.Trackid.eval())
 	gid = int(pars.Guideid.eval())
 	x = float(pars.Positionx.eval())
@@ -23,18 +29,16 @@ def onValuesChanged(changes):
 	mqSender.send(msg)
 	return
 
-def onPulse(par):
+def onPlayStateChange(state):
 	return
 
-def onExpressionChange(par, val, prev):
+def onDeviceChange():
 	return
 
-def onExportChange(par, val, prev):
+def onProjectPreSave():
 	return
 
-def onEnableChange(par, val, prev):
+def onProjectPostSave():
 	return
 
-def onModeChange(par, val, prev):
-	return
 	

@@ -22,7 +22,11 @@ class Utils:
 	def tracks(self, ref = 'raw'):
 		id_dat = self.ownerComp.op(f'{str(ref)}_id_dat')
 		refs = ['track_' + cell.val for cell in id_dat.row(0)]
+		# debug(refs)
+		refs.insert(0,'')
+		refs.append('')
 		tracks = ops(refs)
+		# debug(tracks)
 		return tracks
 
 	def PassPulse(self, parname, trackid = -1):
@@ -34,7 +38,7 @@ class Utils:
 			track.par[str(parname)].pulse()
 
 	def SetVal(self, parname, value, trackid = -1):
-		debug(f'SetVal: {parname}, {value}')
+		# debug(f'SetVal: {parname}, {value}')
 		if not (trackid == -1):
 			tracks = [self.getTrack(trackid)]
 		else:
