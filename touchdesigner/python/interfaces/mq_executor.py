@@ -44,7 +44,7 @@ def onValuesChanged(changes):
 	#send level (including activation/deactivation) _once exactly_ per active frame
 	# debug(f'{cue} set to {level}')
 	act = table[str(cue),'Activation'].val
-	act_ex = f'/exec/11/{int(act)+gid}'
+	act_ex = f'/exec/13/{int(act)+gid}'
 	osc.sendOSC(act_ex, [float(level)], useNonStandardTypes=True)
 	return
 
