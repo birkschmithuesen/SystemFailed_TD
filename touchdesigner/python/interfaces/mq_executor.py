@@ -31,6 +31,7 @@ def onValuesChanged(changes):
 		else:
 			#new cue, send full look
 			cue = par.eval()
+			level = (float(table[str(cue),'Intensity'].val)/100) * float(parent.mqguide.par.Level.eval())
 			color = op('cue_table')[str(cue),'Color'].val
 			beam = op('cue_table')[str(cue),'Beam'].val
 			shutter = op('cue_table')[str(cue),'Shutter'].val

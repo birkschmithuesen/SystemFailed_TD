@@ -25,7 +25,7 @@ def onFrameEnd(frame):
 	x = float(pars.Positionx.eval())
 	y = -float(pars.Positiony.eval())
 	z = float(pars.Height.eval())
-	msg = f'{x:.2f},{z:.2f},{y:.2f},{gid},Tracker:{tid}'
+	msg = f'{x:.2f},{z:.2f},{y:.2f},{int(gid-1)},Tracker:{tid}'
 	mqSender.send(msg)
 	return
 
