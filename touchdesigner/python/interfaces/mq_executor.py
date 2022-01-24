@@ -18,7 +18,8 @@ def onValuesChanged(changes):
 	for c in changes:
 		par = c.par
 		prev = c.prev
-		if par.name == 'Cue' and par.eval() == 0:
+		# debug(f'{prev} -> {par}')
+		if par.name == 'Cue' and int(par.eval()) == 0:
 			#turn previous exec off
 			cue = str(prev)
 			level = 0
@@ -26,23 +27,24 @@ def onValuesChanged(changes):
 		elif par.name == 'Level':
 			#change level only
 			cue = str(parent.mqguide.par.Cue.eval())
-			level = float(table[str(gid),'Intensity'].val) * float(parent.mqguide.par.Level.eval())
+			level = (float(table[str(cue),'Intensity'].val)/100) * float(parent.mqguide.par.Level.eval())
 		else:
 			#new cue, send full look
 			cue = par.eval()
-			color = op('cue_table')[str(gid),'Color'].val
-			beam = op('cue_table')[str(gid),'Beam'].val
-			shutter = op('cue_table')[str(gid),'Shutter'].val
+			color = op('cue_table')[str(cue),'Color'].val
+			beam = op('cue_table')[str(cue),'Beam'].val
+			shutter = op('cue_table')[str(cue),'Shutter'].val
 			color_ex = f'/exec/14/{color}'
 			beam_ex = f'/exec/12/{beam}'
 			shut_ex = f'/exec/12/{shutter}'
-			osc.sendOSC(ex_ref, [int(100)], useNonStandardTypes=True)
-			osc.sendOSC(ex_ref, level, useNonStandardTypes=True)
-			osc.sendOSC(ex_ref, level, useNonStandardTypes=True)
+			osc.sendOSC(color_ex, [int(100)], useNonStandardTypes=True)
+			osc.sendOSC(beam_ex, [int(100)], useNonStandardTypes=True)
+			osc.sendOSC(shut_ex, [int(100)], useNonStandardTypes=True)
 		pass
 	#send level (including activation/deactivation) _once exactly_ per active frame
-	act = table[str(cue), 'Activation'].val
-	act_ex = str(act+gid)
+	# debug(f'{cue} set to {level}')
+	act = table[str(cue),'Activation'].val
+	act_ex = f'/exec/11/{int(act)+gid}'
 	osc.sendOSC(act_ex, [float(level)], useNonStandardTypes=True)
 	return
 
