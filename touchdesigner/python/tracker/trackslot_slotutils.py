@@ -71,11 +71,11 @@ class Slotutils:
 		pass
 
 	def Startrecord(self):
-		self.Recorderop.par.Startrecord.pulse()
+		self.Recorderop.par.Recordactive.val = 1
 		pass
 
 	def Stoprecord(self):
-		self.Recorderop.par.Stoprecord.pulse()
+		self.Recorderop.par.Recordactive.val = 0
 		pass
 
 	def SetFreeze(self):

@@ -17,6 +17,7 @@ def onReady(timerOp):
 	return
 	
 def onStart(timerOp):
+	op.Tracker.StartRound()
 	return
 	
 def onTimerPulse(timerOp, segment):
@@ -41,7 +42,6 @@ def onCycle(timerOp, segment, cycle):
 	return
 
 def onDone(timerOp, segment, interrupt):
-	op.Sound.op('sender').sendOSC('/round/end', [1], asBundle=False, useNonStandardTypes=True)
-	op.Sound.op('sender1').sendOSC('/round/end', [1], asBundle=False, useNonStandardTypes=True)
+	op.Tracker.StopRound()
 	return
 	
