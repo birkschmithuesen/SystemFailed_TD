@@ -30,6 +30,7 @@ class Slotutils:
 		self.Scoreop.par.Roundreset.pulse()
 		self.Scoreop.par.Highscorereset.pulse()
 		self.Recorderop.par.Resetrecord.pulse()
+		self.Recorderop.par.Startrecord.pulse()
 		pass
 
 	def Flagupdate(self):
