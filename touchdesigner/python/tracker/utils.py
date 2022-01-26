@@ -9,6 +9,8 @@ class Utils:
 	def __init__(self, ownerComp):
 		# The component to which this extension is attached
 		self.ownerComp = ownerComp
+		self.ready = 0
+		run("op.Tracker.InitRound()", delayFrames = 300)
 
 	def getTrack(self, trackid):
 		try:
@@ -30,6 +32,7 @@ class Utils:
 		return tracks
 
 	def PassPulse(self, parname, trackid = -1):
+		# delay = 1
 		if not (trackid == -1):
 			tracks = [self.getTrack(trackid)]
 		else:
@@ -46,16 +49,20 @@ class Utils:
 		for track in tracks:
 			track.par[str(parname)].val = value
 
-
-	def StartRound(self):
-		#RESET STATE
+	def InitRound(self):
 		self.PassPulse('Unfreeze')
-		self.PassPulse('Unstrike')
 		self.PassPulse('Unstrike')
 		self.PassPulse('Resetscore')
 		self.PassPulse('Resetrecord')
+		self.SetVal('Timestop', 1)
+		self.ready = 1
+
+	def StartRound(self):
+		if not self.ready:
+			self.InitRound()
 		self.PassPulse('Startrecord')
 		self.SetVal('Timestop', 0)
+		self.ready = 0
 		pass
 
 	def PauseRound(self):
