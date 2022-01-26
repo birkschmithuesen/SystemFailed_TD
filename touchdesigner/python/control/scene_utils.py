@@ -22,20 +22,39 @@ class Utils:
 		self.Writes = ownerComp.ops('*writelive')
 		self.Files = ownerComp.ops('*file')
 
-	def WriteSnapshot(self):
-		for fop in self.Writes:
-			fop.par.write.pulse()
+	def WriteSnapshot(self, components = []):
+		if len(components):
+			for comp in components:
+				op(comp).par.write.pulse()
+		else:
+			for fop in self.Writes:
+				fop.par.write.pulse()
 
-	def WriteAll(self):
-		for fop in self.Files:
-			fop.par.writepulse.pulse()
+	def Write(self, components = []):
+		if len(components):
+			for comp in components:
+				op(f'{comp}_file').par.writepulse.pulse()
+		else:
+			for fop in self.Files:
+				fop.par.writepulse.pulse()
 
-	def LoadAll(self):
-		for fop in self.Files:
-			fop.par.loadonstartpulse.pulse()
+	def Load(self, components = []):
+		if len(components):
+			for comp in components:
+				op(f'{comp}_file').par.loadonstartpulse.pulse()
+		else:
+			for fop in self.Files:
+				fop.par.loadonstartpulse.pulse()
 
-	def Go(self):
+	def Go(self, components = []):
+		if len(components):
+			for comp in components:
+				op(comp).copy(f'{comp}_file')
 		for fop in self.Files:
 			# e.g. 'guide_file' -> 'guide'
 			go = self.ownerComp.op(fop.name.split('_')[0])
 			op(go).copy(fop)
+
+	def GoToTable(self, handle):
+		table = op(handle)
+		return

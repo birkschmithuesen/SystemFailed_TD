@@ -12,6 +12,7 @@ class Utils:
 	"""
 	def __init__(self, ownerComp):
 		self.ownerComp = ownerComp
+		self.pars = ownerComp.par
 		osc1 = op('sender')
 		osc2 = op('sender_debug')
 		self.oscSenders = [osc1, osc2]
@@ -41,17 +42,20 @@ class Utils:
 		return
 
 	def SendFriendly(self, trackid, score):
-		self.SendVoice('friendly', [trackid, score])
+		if self.pars['Warning']:
+			self.SendVoice('friendly', [trackid, score])
 		return
 
 	def SendFreeze(self, subtype, trackid, score):
-		newType = f'freeze/{subtype}'
-		self.SendVoice(newType, [trackid, score])
+		if self.pars['Freeze']:
+			newType = f'freeze/{subtype}'
+			self.SendVoice(newType, [trackid, score])
 		return
 
 	def SendBenched(self, subtype, trackid, score):
-		newType = f'benched/{subtype}'
-		self.SendVoice(newType, [trackid, score])
+		if self.pars['Benched']:
+			newType = f'benched/{subtype}'
+			self.SendVoice(newType, [trackid, score])
 		return
 
 	def SendEvaluationStart(self, trigger = 1):
@@ -83,15 +87,18 @@ class Utils:
 		return
 
 	def SendSoundTrigger(self, subtype, trigger = 1):
-		self.send(f'/sound/{subtype}', [int(trigger)])
+		if self.pars['Noises']:
+			self.send(f'/sound/{subtype}', [int(trigger)])
 		return
 
 	def SendSoundLocalized(self, subtype, trigger = 1, posx = 0, posy = 0):
-		self.send(f'/sound/{subtype}', [int(trigger), float(posx), float(posy)])
+		if self.pars['Noises']:
+			self.send(f'/sound/{subtype}', [int(trigger), float(posx), float(posy)])
 		return
 
 	def SendSynth(self, pitch = 1, level = 0, posx = 0, posy = 0):
-		self.Send(f'/synth/{int(pitch)}', [float(level), float(posx), float(posy)])
+		if self.pars['Synth']:
+			self.Send(f'/synth/{int(pitch)}', [float(level), float(posx), float(posy)])
 		return
 
 	def SendTrackfail(self, pitch =1):
