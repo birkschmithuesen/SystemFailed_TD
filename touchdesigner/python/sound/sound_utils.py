@@ -60,7 +60,7 @@ class Utils:
 
 	def SendEvaluationRank(self, subtype, rank):
 		newType = f'evaluation/{subtype}'
-		hs = op('newhighscores')
+		hs = op('highscore_set')
 		if subtype == 'high':
 			ref = rank
 		else:
