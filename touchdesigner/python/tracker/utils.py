@@ -25,8 +25,8 @@ class Utils:
 		id_dat = self.ownerComp.op(f'{str(ref)}_id_dat')
 		refs = ['track_' + cell.val for cell in id_dat.row(0)]
 		# debug(refs)
-		refs.insert(0,'')
-		refs.append('')
+		refs.insert(0,' ')
+		refs.append(' ')
 		tracks = ops(refs)
 		# debug(tracks)
 		return tracks
