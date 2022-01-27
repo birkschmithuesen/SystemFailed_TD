@@ -82,6 +82,7 @@ class Utils:
 		self.SetVal('Timestop', 1)
 		self.PassPulse('Capturehighscore')
 		self.PassPulse('Stoprecord')
+		self.PassPulse('Updatetrail')
 		self.PassPulse('Unfreeze')
 		self.PassPulse('Unstrike')
 
