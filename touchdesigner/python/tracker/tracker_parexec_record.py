@@ -19,6 +19,7 @@ def onValuesChanged(changes):
 	return
 
 def onPulse(par):
+	op('group_profile').par[par.name].pulse()
 	parent().PassPulse(par.name)
 	return
 
