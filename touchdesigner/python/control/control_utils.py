@@ -10,5 +10,16 @@ class Utils:
 
 	def GoTable(self, ref):
 		table = op(ref)
-		for rowi in range(1, table.rows()):
+		for i in range(1, table.numRows):
+			name = table[i,'name']
+			value = table[i,'value']
+			path = table[i,'path']
+			op(path).par[name].val = value
 			pass
+
+	def Black(self):
+		self.GoTable('graphics_black')
+
+	def Defaults(self):
+		self.GoTable('graphics_platformdefault')
+
