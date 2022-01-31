@@ -50,6 +50,7 @@ class Utils:
 			track.par[str(parname)].val = value
 
 	def InitRound(self):
+		op('group_profile').par.Resetrecord.pulse()
 		self.PassPulse('Unfreeze')
 		self.PassPulse('Unstrike')
 		self.PassPulse('Resetscore')
@@ -58,6 +59,8 @@ class Utils:
 		self.ready = 1
 
 	def StartRound(self):
+		op('group_profile').par.Resetrecord.pulse()
+		op('group_profile').par.Startrecord.pulse()
 		if not self.ready:
 			self.InitRound()
 		self.PassPulse('Startrecord')
@@ -74,11 +77,15 @@ class Utils:
 		pass
 
 	def StopRound(self):
+		op('group_profile').par.Stoprecord.pulse()
+		op('group_profile').par.Updatetrail.pulse()
 		self.SetVal('Timestop', 1)
 		self.PassPulse('Capturehighscore')
 		self.PassPulse('Stoprecord')
+		self.PassPulse('Updatetrail')
 		self.PassPulse('Unfreeze')
 		self.PassPulse('Unstrike')
+
 	
 	def EvaluateRound(self):
 		#TRIGGER EVAL CALLOUT TIMER
