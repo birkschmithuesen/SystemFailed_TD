@@ -1,0 +1,4 @@
+timerop	length	delay	cycle	maxcycles
+intro	10	0	0	0
+round	600	0	0	0
+outro	10	0	0	0

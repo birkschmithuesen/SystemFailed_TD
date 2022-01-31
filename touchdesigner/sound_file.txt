@@ -1,0 +1,11 @@
+parameter	value	path	enable
+Synth	1	/SystemFailed/sound	1
+Intro	1	/SystemFailed/sound	1
+Outro	1	/SystemFailed/sound	1
+Warning	0	/SystemFailed/sound	1
+Freeze	0	/SystemFailed/sound	1
+Benched	0	/SystemFailed/sound	1
+Evaluation	1	/SystemFailed/sound	1
+Introstring	Erste Simulation Beendet	/SystemFailed/sound	1
+Outrostring	Erste Simulation Gestartet	/SystemFailed/sound	1
+Evaluationmode	random	/SystemFailed/sound	1

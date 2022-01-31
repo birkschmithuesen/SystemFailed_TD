@@ -16,6 +16,7 @@ class Utils:
 		osc1 = op('sender')
 		osc2 = op('sender_debug')
 		self.oscSenders = [osc1, osc2]
+		self.zaps = dict()
 
 	def Send(self, message, args):
 		for s in self.oscSenders:
@@ -104,3 +105,9 @@ class Utils:
 	def SendTrackfail(self, pitch =1):
 		self.Send(f'/sound/trackfail', [int(pitch)])
 		return
+
+	def SendZaps(self, tracks):
+		newdict = dict()
+		for track in tracks:
+			tid = track[0]
+			tmp.add(tid)

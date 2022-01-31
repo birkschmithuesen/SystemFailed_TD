@@ -1,0 +1,2 @@
+parameter	value	path	enable
+Assignmode	Four	/SystemFailed/guide	1

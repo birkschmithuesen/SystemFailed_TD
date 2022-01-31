@@ -25,18 +25,22 @@ class Utils:
 	def WriteSnapshot(self, components = []):
 		if len(components):
 			for comp in components:
-				op(comp).par.write.pulse()
+				fop = op(f'{comp}_writelive')
+				fop.par.write.pulse()
+				# fop.save(fop.par.file.val, createFolders=True)
 		else:
 			for fop in self.Writes:
+				# fop.save(fop.par.file.val, createFolders=True)
 				fop.par.write.pulse()
 
 	def Write(self, components = []):
 		if len(components):
 			for comp in components:
-				op(f'{comp}_file').par.writepulse.pulse()
+				fop = op(f'{comp}_file')
+				fop.save(fop.par.file.val, createFolders=True)
 		else:
 			for fop in self.Files:
-				fop.par.writepulse.pulse()
+				fop.save(fop.par.file.val, createFolders=True)
 
 	def Load(self, components = []):
 		if len(components):
