@@ -17,6 +17,9 @@ class Utils:
 		osc2 = op('sender_debug')
 		self.oscSenders = [osc1, osc2]
 		self.zaps = dict()
+		self.zUnassigned = set(range(10))
+		self.strobes = dict()
+		self.sUnassigned = set(range(4))
 
 	def Send(self, message, args):
 		for s in self.oscSenders:
@@ -89,25 +92,78 @@ class Utils:
 
 	def SendSoundTrigger(self, subtype, trigger = 1):
 		if self.pars['Noises']:
-			self.send(f'/sound/{subtype}', [int(trigger)])
+			self.Send(f'/sound/{subtype}', [int(trigger)])
 		return
 
-	def SendSoundLocalized(self, subtype, trigger = 1, posx = 0, posy = 0):
+	def SendSoundLocalized(self, subtype, slot = 0, trigger = 1, posx = 0, posy = 0):
 		if self.pars['Noises']:
-			self.send(f'/sound/{subtype}', [int(trigger), float(posx), float(posy)])
+			self.Send(f'/sound/{subtype}', [int(slot),int(trigger), float(posx), float(posy)])
 		return
 
 	def SendSynth(self, pitch = 1, level = 0, posx = 0, posy = 0):
 		if self.pars['Synth']:
-			self.Send(f'/synth/{int(pitch)}', [float(level), float(posx), float(posy)])
+			self.Send(f'/synth', [int(pitch), float(level), float(posx), float(posy)])
 		return
 
 	def SendTrackfail(self, pitch =1):
 		self.Send(f'/sound/trackfail', [int(pitch)])
 		return
 
+	# list tracks: [trackid, px, py]
 	def SendZaps(self, tracks):
-		newdict = dict()
+		tmp = dict()
+		deletes = set()
+		zaps = self.zaps
 		for track in tracks:
 			tid = track[0]
-			tmp.add(tid)
+			tx = track[1]
+			ty = track[2]
+			tmp[tid] = (tid,tx,ty)
+		for k in zaps.keys():
+			if not k in tmp.keys():
+				deletes.add(k)
+		for k in deletes:
+			self.SendSoundLocalized(subtype='zap', slot=k, trigger=0, posx=zaps[k][1], posy=zaps[k][2])
+			zaps.pop(k)
+			self.zUnassigned.add(k)
+			pass
+		for k in tmp.keys():
+			if len(self.zUnassigned) == 0:
+				break
+			vals = tmp[k]
+			if k in zaps.keys():
+				slotid = zaps[k][0]
+			else: 
+				slotid = self.zUnassigned.pop()
+			zaps[k] = (slotid, tmp[k][0], tmp[k][1], tmp[k][2])
+		for k in zaps:
+			self.SendSoundLocalized(subtype='zap', slot=k, trigger=1, posx=zaps[k][1], posy=zaps[k][2])
+
+	def SendStrobes(self, tracks):
+		tmp = dict()
+		deletes = set()
+		zaps = self.zaps
+		for track in tracks:
+			tid = track[0]
+			tx = track[1]
+			ty = track[2]
+			tmp[tid] = (tid,tx,ty)
+		for k in zaps.keys():
+			if not k in tmp.keys():
+				deletes.add(k)
+		for k in deletes:
+			self.SendSoundLocalized(subtype='zap', slot=k, trigger=0, posx=zaps[k][1], posy=zaps[k][2])
+			zaps.pop(k)
+			self.zUnassigned.add(k)
+			pass
+		for k in tmp.keys():
+			if len(self.zUnassigned) == 0:
+				break
+			vals = tmp[k]
+			if k in zaps.keys():
+				slotid = zaps[k][0]
+			else:
+				slotid = self.zUnassigned.pop()
+			zaps[k] = (slotid, tmp[k][0], tmp[k][1], tmp[k][2])
+		for k in zaps:
+			self.SendSoundLocalized(subtype='zap', slot=k, trigger=1, posx=zaps[k][1], posy=zaps[k][2])
