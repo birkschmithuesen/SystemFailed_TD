@@ -113,7 +113,7 @@ class Utils:
 
 	def SendSynth(self, pitch = 1, level = 0, posx = 0, posy = 0):
 		if self.pars['Synth']:
-			self.SendMaxmsp(f'/synth', [int(pitch)+1, float(level), float(posx), float(posy)])
+			self.SendMaxmsp(f'/synth', [int(pitch), float(level), float(posx), float(posy)])
 		return
 
 	def SendTrackfail(self, pitch =1):
@@ -125,7 +125,6 @@ class Utils:
 		tmp = dict()
 		deletes = set()
 		zaps = self.zaps
-
 		if len(tracks) > 1:
 			for track in tracks:
 				tid = track[0]
@@ -166,26 +165,25 @@ class Utils:
 			tx = track[1]
 			ty = track[2]
 			tmp[tid] = (tid,tx,ty)
-		for k in strobes.keys():
-			if not k in tmp.keys():
-				deletes.add(k)
-		for k in deletes:
-			# OFF
-			self.SendSoundLocalized(subtype='strobe', slot=k, trigger=0, posx=zaps[k][1], posy=zaps[k][2])
-			strobes.pop(k)
-			self.sUnassigned.add(k)
-			pass
-		for k in tmp.keys():
-			if len(self.zUnassigned) == 0:
-				break
-			vals = tmp[k]
-			if k in strobes.keys():
+		for tid in tmp.keys():
+			# vals = tmp[tid]
+			if tid in strobes.keys():
 				# RETRIGGER
-				slotid = strobes[k][0]
-				strobes[k] = (slotid, tmp[k][0], tmp[k][1], tmp[k][2])
-				self.SendSoundLocalized(subtype='strobe', slot=k, trigger=1, posx=zaps[k][1], posy=zaps[k][2])
+				slotid = strobes[tid][0]
+				strobes[tid] = (slotid, tmp[tid][0], tmp[tid][1], tmp[tid][2])
+				self.SendSoundLocalized(subtype='strobe', slot=slotid, trigger=-1, posx=strobes[tid][2], posy=strobes[tid][3])
 			else: 
+				if len(self.zUnassigned) == 0:
+					pass
 				# TRIGGER
-				slotid = self.sUnassigned.pop()
-				strobes[k] = (slotid, tmp[k][0], tmp[k][1], tmp[k][2])
-				self.SendSoundLocalized(subtype='strobe', slot=k, trigger=1, posx=zaps[k][1], posy=zaps[k][2])
+				slotid = self.zUnassigned.pop()
+				strobes[tid] = (slotid, tmp[tid][0], tmp[tid][1], tmp[tid][2])
+				self.SendSoundLocalized(subtype='strobe', slot=slotid, trigger=1, posx=strobes[tid][2], posy=strobes[tid][3])
+		for tid in strobes.keys():
+			if not (tid in tmp.keys()):
+				deletes.add(tid)
+		for tid in deletes:
+			# OFF
+			self.SendSoundLocalized(subtype='zap', slot=strobes[tid][0], trigger=0, posx=strobes[tid][2], posy=strobes[tid][3])
+			self.zUnassigned.add(strobes[tid][0])
+			strobes.pop(tid)
