@@ -37,15 +37,15 @@ def onCycleStart(timerOp, segment, cycle):
 	return
 
 def onCycleEndAlert(timerOp, segment, cycle, alertSegment, alertDone, interrupt):
-	op.Roundtimer.par.Roundlock.val = 1
-	op.Sound.SendCountdown()
+	run("op.Roundtimer.par.Roundlock.val = 1", delayFrames = 1)
+	run("op.Sound.SendCountdown()", delayFrames = 1)
 	return
 	
 def onCycle(timerOp, segment, cycle):
 	return
 
 def onDone(timerOp, segment, interrupt):
-	op.Tracker.StopRound()
-	op.Sound.SendEvaluationStart()
+	run("op.Tracker.StopRound()", delayFrames = 1)
+	run("op.Sound.SendEvaluationStart()", delayFrames = 1)
 	return
 	

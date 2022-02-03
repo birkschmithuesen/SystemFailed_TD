@@ -38,11 +38,6 @@ def onCycleEndAlert(timerOp, segment, cycle, alertSegment, alertDone, interrupt)
 	return
 	
 def onCycle(timerOp, segment, cycle):
-	if cycle < 3:
-		mode = 'high'
-	else:
-		mode = 'low'
-	op.Sound.SendEvaluationRank(mode, cycle)
 	return
 
 def onDone(timerOp, segment, interrupt):
