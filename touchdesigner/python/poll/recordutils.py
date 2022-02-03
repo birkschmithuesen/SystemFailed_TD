@@ -28,3 +28,8 @@ class Utils:
 			tid = ans[0]
 			val = ans[1]
 			rd.appendRow([tid,val])
+
+	def Clear(self):
+		rd = self.recordDat
+		rd.clear()
+		rd.appendRow(['Trackid', 'Answer'])
