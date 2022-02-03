@@ -11,12 +11,14 @@
 # called again after the returned number of frames.
 
 def onInitialize(timerOp):
+	run("op.Sound.SendEvaluationStart()", delayFrames = 1)
 	return 0
 
 def onReady(timerOp):
 	return
 	
 def onStart(timerOp):
+	# SHOW EVALUATION
 	return
 	
 def onTimerPulse(timerOp, segment):

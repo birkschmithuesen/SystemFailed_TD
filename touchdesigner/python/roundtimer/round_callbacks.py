@@ -46,6 +46,5 @@ def onCycle(timerOp, segment, cycle):
 
 def onDone(timerOp, segment, interrupt):
 	run("op.Tracker.StopRound()", delayFrames = 1)
-	run("op.Sound.SendEvaluationStart()", delayFrames = 1)
 	return
 	

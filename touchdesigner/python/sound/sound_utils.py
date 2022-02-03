@@ -61,21 +61,16 @@ class Utils:
 		self.SendAbleton(msg, args)
 		return
 
-	def SendFriendly(self, trackid, score):
-		if self.pars['Warning']:
-			self.SendVoice('friendly', [trackid, score])
-		return
-
 	def SendFreeze(self, subtype, trackid):
 		if self.pars['Freeze']:
 			newType = f'freeze/{subtype}'
 			self.SendVoice(newType, [trackid])
 		return
 
-	def SendBenched(self, subtype, trackid, score):
+	def SendBenched(self, subtype, trackid):
 		if self.pars['Benched']:
 			newType = f'benched/{subtype}'
-			self.SendVoice(newType, [trackid, score])
+			self.SendVoice(newType, [trackid])
 		return
 
 	def SendEvaluationStart(self, trigger = 1):
@@ -152,7 +147,7 @@ class Utils:
 				# RETRIGGER
 				slotid = zaps[k][0]
 				zaps[k] = (slotid, tmp[k][0], tmp[k][1], tmp[k][2])
-				self.SendSoundLocalized(subtype='zap', slot=k, trigger=-1, posx=zaps[k][1], posy=zaps[k][2])
+				self.SendSoundLocalized(subtype='zap', slot=k, trigger=1, posx=zaps[k][1], posy=zaps[k][2])
 			else: 
 				# TRIGGER
 				slotid = self.zUnassigned.pop()
