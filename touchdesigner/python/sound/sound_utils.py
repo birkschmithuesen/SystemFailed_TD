@@ -125,34 +125,37 @@ class Utils:
 		tmp = dict()
 		deletes = set()
 		zaps = self.zaps
-		for track in tracks:
-			tid = track[0]
-			tx = track[1]
-			ty = track[2]
-			tmp[tid] = (tid,tx,ty)
-		for k in zaps.keys():
-			if not k in tmp.keys():
-				deletes.add(k)
-		for k in deletes:
-			# OFF
-			self.SendSoundLocalized(subtype='zap', slot=k, trigger=0, posx=zaps[k][1], posy=zaps[k][2])
-			zaps.pop(k)
-			self.zUnassigned.add(k)
-			pass
-		for k in tmp.keys():
-			if len(self.zUnassigned) == 0:
-				break
-			vals = tmp[k]
-			if k in zaps.keys():
+
+		if len(tracks) > 1:
+			for track in tracks:
+				tid = track[0]
+				tx = track[1]
+				ty = track[2]
+				tmp[tid] = (tid,tx,ty)
+		for tid in tmp.keys():
+			# vals = tmp[tid]
+			if tid in zaps.keys():
 				# RETRIGGER
-				slotid = zaps[k][0]
-				zaps[k] = (slotid, tmp[k][0], tmp[k][1], tmp[k][2])
-				self.SendSoundLocalized(subtype='zap', slot=k, trigger=1, posx=zaps[k][1], posy=zaps[k][2])
+				slotid = zaps[tid][0]
+				zaps[tid] = (slotid, tmp[tid][0], tmp[tid][1], tmp[tid][2])
+				debug(f'zap retrigger {zaps[tid]}')
+				self.SendSoundLocalized(subtype='zap', slot=slotid, trigger=-1, posx=zaps[tid][2], posy=zaps[tid][3])
 			else: 
+				if len(self.zUnassigned) == 0:
+					pass
 				# TRIGGER
 				slotid = self.zUnassigned.pop()
-				zaps[k] = (slotid, tmp[k][0], tmp[k][1], tmp[k][2])
-				self.SendSoundLocalized(subtype='zap', slot=k, trigger=1, posx=zaps[k][1], posy=zaps[k][2])
+				zaps[tid] = (slotid, tmp[tid][0], tmp[tid][1], tmp[tid][2])
+				debug(f'zap trigger {zaps[tid]}')
+				self.SendSoundLocalized(subtype='zap', slot=slotid, trigger=1, posx=zaps[tid][2], posy=zaps[tid][3])
+		for tid in zaps.keys():
+			if not (tid in tmp.keys()):
+				deletes.add(tid)
+		for tid in deletes:
+			# OFF
+			self.SendSoundLocalized(subtype='zap', slot=zaps[tid][0], trigger=0, posx=zaps[tid][2], posy=zaps[tid][3])
+			self.zUnassigned.add(zaps[tid][0])
+			zaps.pop(tid)
 
 	def SendStrobes(self, tracks):
 		tmp = dict()
