@@ -11,7 +11,6 @@
 # called again after the returned number of frames.
 
 def onInitialize(timerOp):
-	run("op.Sound.SendEvaluationStart()", delayFrames = 1)
 	return 0
 
 def onReady(timerOp):
@@ -19,6 +18,7 @@ def onReady(timerOp):
 	
 def onStart(timerOp):
 	# SHOW EVALUATION
+	op.Sound.SendEvaluationStart()
 	return
 	
 def onTimerPulse(timerOp, segment):
@@ -40,11 +40,11 @@ def onCycleEndAlert(timerOp, segment, cycle, alertSegment, alertDone, interrupt)
 	return
 	
 def onCycle(timerOp, segment, cycle):
-	if cycle < 3:
-		mode = 'high'
-	else:
-		mode = 'low'
-	op.Sound.SendEvaluationRank(mode, cycle)
+	# if cycle < 3:
+		# mode = 'high'
+	# else:
+		# mode = 'low'
+	# op.Sound.SendEvaluationRank(mode, cycle)
 	return
 
 def onDone(timerOp, segment, interrupt):

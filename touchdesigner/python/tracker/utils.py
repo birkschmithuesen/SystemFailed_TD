@@ -51,7 +51,7 @@ class Utils:
 
 	def InitRound(self):
 		op('group_profile').par.Resetrecord.pulse()
-		self.PassPulse('Unfreeze')
+		self.PassPulse('Unfreezesilent')
 		self.PassPulse('Unstrike')
 		self.PassPulse('Resetscore')
 		self.PassPulse('Resetrecord')
@@ -83,10 +83,5 @@ class Utils:
 		self.PassPulse('Capturehighscore')
 		self.PassPulse('Stoprecord')
 		self.PassPulse('Updatetrail')
-		self.PassPulse('Unfreeze')
-		self.PassPulse('Unstrike')
-
-	
-	def EvaluateRound(self):
-		#TRIGGER EVAL CALLOUT TIMER
-		pass
+		self.PassPulse('Unfreezesilent')
+		# self.PassPulse('Unstrike')
