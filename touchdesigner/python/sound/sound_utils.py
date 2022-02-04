@@ -44,6 +44,8 @@ class Utils:
 		return
 
 	def SendIntro(self, name):
+		if not parent.Sound.par.Intro.eval():
+			return
 		msg = f'/intro/{name}'
 		args = [int(1)]
 		self.SendAbleton(msg, args)
@@ -56,18 +58,24 @@ class Utils:
 		return
 
 	def SendRound(self, subtype, arguments):
+		if not parent.Sound.par.Round.eval():
+			return
 		msg = f'/round/{subtype}'
 		args = [int(a) for a in arguments]
 		self.SendAbleton(msg, args)
 		return
 
 	def SendFreeze(self, subtype, trackid):
+		if not parent.Sound.par.Freeze.eval():
+			return
 		if self.pars['Freeze']:
 			newType = f'freeze/{subtype}'
 			self.SendVoice(newType, [trackid])
 		return
 
 	def SendBenched(self, subtype, trackid):
+		if not parent.Sound.par.Bench.eval():
+			return
 		if self.pars['Benched']:
 			newType = f'benched/{subtype}'
 			self.SendVoice(newType, [trackid])

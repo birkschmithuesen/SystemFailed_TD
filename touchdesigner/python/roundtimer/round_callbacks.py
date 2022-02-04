@@ -17,7 +17,7 @@ def onReady(timerOp):
 	return
 	
 def onStart(timerOp):
-	op.Roundtimer.par.Roundlock = 0
+	op.Roundtimer.par.Roundlock.val = 0
 	op.Tracker.StartRound()
 	return
 	
@@ -46,5 +46,6 @@ def onCycle(timerOp, segment, cycle):
 
 def onDone(timerOp, segment, interrupt):
 	run("op.Tracker.StopRound()", delayFrames = 1)
+	op.Sound.SendEvaluationStart()
 	return
 	
