@@ -17,10 +17,6 @@ def onReady(timerOp):
 	return
 	
 def onStart(timerOp):
-	name = str(op.Scene.par.Ident.eval())
-	op.Sound.SendScene(name)
-	op.Sound.SendIntro(name)
-	op.Tracker.Initround()
 	return
 	
 def onTimerPulse(timerOp, segment):

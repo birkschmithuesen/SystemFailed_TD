@@ -1,5 +1,5 @@
 parameter	value	path	enable
 Distancesceneswitch	0	/SystemFailed/rating	1
-Movementsceneswitch	0	/SystemFailed/rating	1
+Movementsceneswitch	1	/SystemFailed/rating	1
 Predictionsceneswitch	0	/SystemFailed/rating	1
-Associationsceneswitch	1	/SystemFailed/rating	1
+Associationsceneswitch	0	/SystemFailed/rating	1
