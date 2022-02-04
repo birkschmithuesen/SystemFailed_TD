@@ -1,5 +1,6 @@
 {
     "default" : {
-        "Field_Resolution" : { "x" : 1920  , "y": 1080}
+        "Field_Resolution" : { "x" : 1920  , "y": 1080},
+        "Field_Size"       : { "x" : 16, "y" : 9 }
     }
 }
