@@ -18,6 +18,7 @@ class Utils:
 	def __init__(self, ownerComp):
 		# The component to which this extension is attached
 		self.ownerComp = ownerComp
+		self.pars = ownerComp.par
 		self.Grabs = ownerComp.ops('*readlive')
 		self.Writes = ownerComp.ops('*writelive')
 		self.Files = ownerComp.ops('*file')
@@ -34,13 +35,17 @@ class Utils:
 				fop.par.write.pulse()
 
 	def Write(self, components = []):
+		folder = self.pars.Livefolder.eval()
+		mod.os.makedirs(f'{project.folder}/{folder}', exist_ok=True)
 		if len(components):
 			for comp in components:
 				fop = op(f'{comp}_file')
-				fop.save(fop.par.file.val, createFolders=True)
+				# fop.save(fop.par.file.val, createFolders=True)
+				fop.par.writepulse.pulse()
 		else:
 			for fop in self.Files:
-				fop.save(fop.par.file.val, createFolders=True)
+				fop.par.writepulse.pulse()
+				# fop.save(fop.par.file.val, createFolders=True)
 
 	def Load(self, components = []):
 		if len(components):
