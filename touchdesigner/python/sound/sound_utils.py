@@ -39,14 +39,12 @@ class Utils:
 
 	def SendScene(self, name):
 		msg = f'/scene'
-		args = [str(name)]
+		args = [str(name).lower()]
 		self.SendMaxmsp(msg, args)
 		return
 
 	def SendIntro(self, name):
-		if not parent.Sound.par.Intro.eval():
-			return
-		msg = f'/intro/{name}'
+		msg = f'/intro/{name.lower()}'
 		args = [int(1)]
 		self.SendAbleton(msg, args)
 		return
@@ -58,27 +56,19 @@ class Utils:
 		return
 
 	def SendRound(self, subtype, arguments):
-		if not parent.Sound.par.Round.eval():
-			return
 		msg = f'/round/{subtype}'
 		args = [int(a) for a in arguments]
 		self.SendAbleton(msg, args)
 		return
 
 	def SendFreeze(self, subtype, trackid):
-		if not parent.Sound.par.Freeze.eval():
-			return
-		if self.pars['Freeze']:
-			newType = f'freeze/{subtype}'
-			self.SendVoice(newType, [trackid])
+		newType = f'freeze/{subtype}'
+		self.SendVoice(newType, [trackid])
 		return
 
 	def SendBenched(self, subtype, trackid):
-		if not parent.Sound.par.Bench.eval():
-			return
-		if self.pars['Benched']:
-			newType = f'benched/{subtype}'
-			self.SendVoice(newType, [trackid])
+		newType = f'benched/{subtype}'
+		self.SendVoice(newType, [trackid])
 		return
 
 	def SendEvaluationStart(self, trigger = 1):

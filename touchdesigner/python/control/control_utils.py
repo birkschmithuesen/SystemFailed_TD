@@ -30,8 +30,10 @@ class Utils:
 			pass
 
 	def GoScene(self):
+		scene = str(self.ownerComp.par.Ident.eval())
 		for fop in ops('scene_*'):
 			GoTable(fop)
+		op.Sound.SendScene(scene)
 
 	def Black(self):
 		self.GoTable('graphics_black')
