@@ -17,8 +17,8 @@ def onReady(timerOp):
 	return
 	
 def onStart(timerOp):
-	op.Roundtimer.par.Roundlock.val = 0
-	op.Tracker.StartRound()
+	# op.Roundtimer.par.Roundlock.val = 0
+	# op.Tracker.StartRound()
 	return
 	
 def onTimerPulse(timerOp, segment):
@@ -37,14 +37,14 @@ def onCycleStart(timerOp, segment, cycle):
 	return
 
 def onCycleEndAlert(timerOp, segment, cycle, alertSegment, alertDone, interrupt):
-	run("op.Roundtimer.par.Roundlock.val = 1", delayFrames = 1)
-	run("op.Sound.SendCountdown()", delayFrames = 1)
+	# run("op.Roundtimer.par.Roundlock.val = 1", delayFrames = 1)
+	# run("op.Sound.SendCountdown()", delayFrames = 1)
 	return
 	
 def onCycle(timerOp, segment, cycle):
 	return
 
 def onDone(timerOp, segment, interrupt):
-	run("op.Tracker.StopRound()", delayFrames = 1)
+	# run("op.Tracker.StopRound()", delayFrames = 1)
 	return
 	

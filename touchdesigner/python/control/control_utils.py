@@ -9,6 +9,7 @@ class Utils:
 		self.ownerComp = ownerComp
 		self.pars = ownerComp.par
 		self.Loaded = ownerComp.op('./loaded_cue')
+		self.Sceneloader = op.Scene
 
 	def Pause(self):
 		self.pars.Timestop.val = 1
@@ -17,29 +18,41 @@ class Utils:
 		self.pars.Timestop.val = 0
 
 	def Go(self):
+		op.Scene.Load()
+		op.Scene.Go()
 		self.GoScene()
 		self.GoGraphics()
 		self.GoSound()
 
+	def GoTo(self, cueIndex):
+		sop = op.Scene
+		target = tdu.clamp(int(cueIndex), 1, (sop.par.Size.eval() - 1))
+		sop.par.Index.val = target
+		self.Go()
+
+	def Arm(self):
+		self.Sceneloader.par.Index.val = int(self.pars.Preloadindex.eval())
+
 	def GoRelative(self, step):
 		sop = op.Scene.par
 		curi = sop.Index.eval()
-		nexti = tdu.clamp((curi + step), 0, (sop.Size - 1))
+		nexti = tdu.clamp((curi + step), 1, (sop.Size - 1))
 		sop.Index = nexti
-		op.Scene.Load()
-		op.Scene.Go()
 		self.Go()
 
 	def GoNext(self):
-		self.GoRelative(1)
+		target = int(self.pars.Followindex.eval())
+		self.GoTo(target)
 
 	def GoBack(self):
-		self.GoRelative(-1)
+		target = int(self.pars.Previousindex.eval())
+		self.GoTo(target)
 
 	def EndSkip(self, delay = 15):
-		self.Pause()
-		run('op.Control.par.Endround.pulse()', delayFrames = 30*delay)
-		run('op.Control.Unpause()', delayFrames = 30*delay)
+		# self.Pause()
+		# run('op.Control.par.Endround.pulse()', delayFrames = 30*delay)
+		# run('op.Control.Unpause()', delayFrames = 30*delay)
+		pass
 
 	def GoTable(self, ref):
 		table = op(ref)
@@ -51,7 +64,6 @@ class Utils:
 			pass
 
 	def GoScene(self):
-		op.Scene.Go()
 		for fop in ops('scene_*'):
 			self.GoTable(fop)
 
@@ -64,13 +76,22 @@ class Utils:
 
 	def GoSound(self):
 		scene = self.Loaded[1,'scene']
-		soundIntro = self.Loaded[1,'soundintro'].val
-		soundEval = self.Loaded[1,'soundeval'].val
-		soundRound = self.Loaded[1,'soundround'].val
+		soundIntro =  str(self.Loaded[1,'soundintro'].val)
+		soundEval = str(self.Loaded[1,'soundeval'].val)
+		soundRound = str(self.Loaded[1,'soundround'].val)
+		soundSynth = int(self.Loaded[1,'soundsynth'].val or 0)
+		soundTrack = (self.Loaded[1,'soundtrack'].val or 0)
 		op.Sound.SendScene(scene)
-		if soundIntro:
+		op.Sound.SendSynthtoggle(soundSynth)
+		if soundTrack == 0:
+			op.Sound.SendSoundtrack()
+		else:
+			soundTrack = str(soundTrack).split(' ')			
+			op.Sound.SendSoundtrack(subtype = soundTrack[0], trigger = soundTrack[1])
+		if not soundIntro == '':
 			op.Sound.SendIntro(soundIntro)
-		if soundEval:
+		if not soundEval == '':
 			op.Sound.SendEvaluationStart()
-		if soundRound:
+		if not soundRound == '':
 			op.Sound.SendRound(soundRound)
+		

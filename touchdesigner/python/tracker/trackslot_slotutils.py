@@ -19,6 +19,7 @@ class Slotutils:
 		# The component to which this extension is attached
 		self.ownerComp = ownerComp
 		self.pars = ownerComp.par
+		ownerComp.par.Performer.val = 0
 		self.Freezeop = ownerComp.op('freeze')
 		self.Freezeop.par.Init.pulse()
 		self.Scoreop = ownerComp.op('score')
@@ -26,11 +27,12 @@ class Slotutils:
 		self.Neighboursop = ownerComp.op('neighbours')
 
 	def Reset(self):
-		self.Freezeop.par.Reset.pulse()
+		self.ownerComp.par.Performer.val = 0
+		self.Freezeop.par.Unbenchsilent.pulse()
+		self.Freezeop.par.Unfreezesilent.pulse()
 		self.Scoreop.par.Roundreset.pulse()
 		self.Scoreop.par.Highscorereset.pulse()
 		self.Recorderop.par.Resetrecord.pulse()
-		self.Recorderop.par.Startrecord.pulse()
 		pass
 
 	def Flagupdate(self):

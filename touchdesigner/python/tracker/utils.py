@@ -55,16 +55,15 @@ class Utils:
 		self.PassPulse('Unstrike')
 		self.PassPulse('Resetscore')
 		self.PassPulse('Resetrecord')
-		self.SetVal('Timestop', 1)
+		op.Control.par.Timestop = 1
 		self.ready = 1
 
 	def StartRound(self):
-		op('group_profile').par.Resetrecord.pulse()
-		op('group_profile').par.Startrecord.pulse()
 		if not self.ready:
 			self.InitRound()
+		op('group_profile').par.Startrecord.pulse()
 		self.PassPulse('Startrecord')
-		self.SetVal('Timestop', 0)
+		op.Control.par.Timestop = 0
 		self.ready = 0
 		pass
 
@@ -77,9 +76,9 @@ class Utils:
 		pass
 
 	def StopRound(self):
+		op.Control.par.Timestop = 1
 		op('group_profile').par.Stoprecord.pulse()
 		op('group_profile').par.Updatetrail.pulse()
-		self.SetVal('Timestop', 1)
 		self.PassPulse('Capturehighscore')
 		self.PassPulse('Stoprecord')
 		self.PassPulse('Updatetrail')

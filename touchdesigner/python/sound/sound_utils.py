@@ -9,7 +9,7 @@ import TDFunctions as TDF
 class Utils:
 	"""
 	Utils for the SystemFailed Sound comp
-	"""
+	""" 
 	def __init__(self, ownerComp):
 		self.ownerComp = ownerComp
 		self.pars = ownerComp.par
@@ -17,9 +17,12 @@ class Utils:
 		maxmsp2 = op('sender_debug_maxmsp')
 		ableton1 = op('sender_ableton')
 		ableton2 = op('sender_debug_ableton')
+		synth1 = op('sender_synth')
+		synth2 = op('sender_synth_debug')
 		
 		self.maxmspSenders = [maxmsp1, maxmsp2]
-		self.abletonSenders = [ableton1, ableton2] 
+		self.abletonSenders = [ableton1, ableton2]
+		self.synthSenders = [synth1, synth2]
 		self.zaps = dict()
 		self.zUnassigned = set(range(10))
 		self.strobes = dict()
@@ -33,6 +36,12 @@ class Utils:
 
 	def SendAbleton(self, message, args):
 		for s in self.abletonSenders:
+			# debug(f'{self.ownerComp} sending osc on {s}:\n {message}, {args}')
+			s.sendOSC(message, args, asBundle=False, useNonStandardTypes=True)
+		return
+
+	def SendSynth(self, message, args):
+		for s in self.synthSenders:
 			# debug(f'{self.ownerComp} sending osc on {s}:\n {message}, {args}')
 			s.sendOSC(message, args, asBundle=False, useNonStandardTypes=True)
 		return
@@ -55,7 +64,7 @@ class Utils:
 		self.SendMaxmsp(msg, args)
 		return
 
-	def SendRound(self, subtype, arguments):
+	def SendRound(self, subtype, arguments = [1]):
 		msg = f'/round/{subtype}'
 		args = [int(a) for a in arguments]
 		self.SendAbleton(msg, args)
@@ -109,9 +118,23 @@ class Utils:
 			self.SendAbleton(f'/sound/{subtype}', [int(slot),int(trigger), float(posx), float(posy)])
 		return
 
-	def SendSynth(self, pitch = 1, level = 0, posx = 0, posy = 0):
+	def SendSynthSingle(self, pitch = 1, level = 0, posx = 0, posy = 0):
 		if self.pars['Synth']:
-			self.SendMaxmsp(f'/synth', [int(pitch), float(level), float(posx), float(posy)])
+			self.SendSynth(f'/synth', [int(pitch), float(level), float(posx), float(posy)])
+		return
+
+	def SendSynthBundle(self, args):
+		self.SendSynth(f'/synth', args)
+		return
+
+	def SendSynthtoggle(self, trigger = 1):
+		self.SendSynth(f'/synthtoggle', [trigger])
+		return
+
+	def SendSoundtrack(self, subtype = '0', trigger = 1):
+		if subtype == '0':
+			trigger = 0
+		self.SendAbleton(f'/soundtrack/{subtype}', [trigger])
 		return
 
 	def SendTrackfail(self, pitch =1):
