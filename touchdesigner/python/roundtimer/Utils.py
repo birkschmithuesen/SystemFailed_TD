@@ -13,14 +13,10 @@ class Utils:
 		self.Outro = op('outro')
 
 	def Pause(self):
-		self.Intro.par.play.val = False
-		self.Round.par.play.val = False
-		self.Outro.par.play.val = False
+		op.Control.par.Timestop = 1
 
 	def Play(self):
-		self.Intro.par.play.val = True
-		self.Round.par.play.val = True
-		self.Outro.par.play.val = True
+		op.Control.par.Timestop = 0
 
 	def ReInit(self):
 		self.Round.par.initialize.pulse()

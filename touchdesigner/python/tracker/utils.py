@@ -69,11 +69,11 @@ class Utils:
 		pass
 
 	def PauseRound(self):
-		self.SetVal('Timestop', 1)
+		op.Control.par.Timestop = 1
 		pass
 
 	def ResumeRound(self):
-		self.SetVal('Timestop', 0)
+		op.Control.par.Timestop = 0
 		pass
 
 	def StopRound(self):

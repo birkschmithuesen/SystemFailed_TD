@@ -58,12 +58,9 @@ class Utils:
 	def Go(self, components = []):
 		if len(components):
 			for comp in components:
+				# e.g. 'guide_file' -> 'guide'
 				op(comp).copy(f'{comp}_file')
-		for fop in self.Files:
-			# e.g. 'guide_file' -> 'guide'
-			go = self.ownerComp.op(fop.name.split('_')[0])
-			op(go).copy(fop)
-
-	def GoToTable(self, handle):
-		table = op(handle)
-		return
+		else:
+			for fop in self.Files:
+				go = self.ownerComp.op(fop.name.split('_')[0])
+				op(go).copy(fop)

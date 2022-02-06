@@ -17,8 +17,7 @@ def onReady(timerOp):
 	return
 	
 def onStart(timerOp):
-	# SHOW EVALUATION
-	op.Sound.SendEvaluationStart()
+	# op.Sound.SendEvaluationStart()
 	return
 	
 def onTimerPulse(timerOp, segment):
