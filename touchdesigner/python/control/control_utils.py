@@ -25,6 +25,7 @@ class Utils:
 		self.GoSound()
 		self.GoTracks()
 		self.GoTimer()
+		self.GoBehavior()
 
 	def GoTo(self, cueIndex):
 		sop = op.Scene
@@ -69,6 +70,19 @@ class Utils:
 		self.pars.Timestop = int(self.Loaded[1,'timestop'].val)
 		for fop in ops('scene_*'):
 			self.GoTable(fop)
+
+	def GoBehavior(self):
+		behavior = self.Loaded[1,'behavior'].val
+		if not behavior == '':
+			if behavior == 'default':
+				op.Group.par.Roundfinishearly.val = 0
+				op.Group.par.Roundfinishcriticalmass.val = 0
+			elif behavior == 'conform':
+				op.Group.par.Roundfinishearly.val = 1
+				op.Group.par.Roundfinishcriticalmass.val = 0
+			elif behavior == 'rebel':
+				op.Group.par.Roundfinishearly.val = 1
+				op.Group.par.Roundfinishcriticalmass.val = 1
 
 	def GoTracks(self):
 		cmd = str(self.Loaded[1,'tracks'].val)
