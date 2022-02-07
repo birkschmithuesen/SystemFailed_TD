@@ -49,6 +49,9 @@ class Utils:
 		for track in tracks:
 			track.par[str(parname)].val = value
 
+	def Reassign(self):
+		op.Pharus.par.Reassign.pulse()
+
 	def InitRound(self):
 		op('group_profile').par.Resetrecord.pulse()
 		self.PassPulse('Unfreezesilent')

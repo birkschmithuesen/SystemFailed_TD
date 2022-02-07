@@ -19,7 +19,10 @@ def onValuesChanged(changes):
 	return
 
 def onPulse(par):
-	parent().PassPulse(par.name)
+	if (par.name == 'Reassign'):
+		op.Pharus.par.Reassign.pulse()
+	else:
+		parent().PassPulse(par.name)
 	return
 
 def onExpressionChange(par, val, prev):

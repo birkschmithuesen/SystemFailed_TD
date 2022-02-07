@@ -28,6 +28,7 @@ class Slotutils:
 
 	def Reset(self):
 		self.ownerComp.par.Performer.val = 0
+		self.ownerComp.par.Unstrike.pulse()
 		self.Freezeop.par.Unbenchsilent.pulse()
 		self.Freezeop.par.Unfreezesilent.pulse()
 		self.Scoreop.par.Roundreset.pulse()
@@ -47,20 +48,6 @@ class Slotutils:
 			self.SetFreeze()
 		else:
 			self.SetParticipant()
-
-	def SetActive(self, val=True):
-		if val:
-			self.ownerComp.Timestamp.val = absTime.seconds
-		else:
-			self.ownerComp.Logofftime.val = absTime.seconds
-			self.ownerComp.Reset()
-		pass
-
-	def SetPerformer(self, val=True):
-		pass
-
-	def SetParticipant(self, val=True):
-		pass
 
 	def Resetscore(self):
 		if not self.pars.Benched:

@@ -23,6 +23,8 @@ class Utils:
 		self.GoScene()
 		self.GoGraphics()
 		self.GoSound()
+		self.GoTracks()
+		self.GoTimer()
 
 	def GoTo(self, cueIndex):
 		sop = op.Scene
@@ -64,8 +66,23 @@ class Utils:
 			pass
 
 	def GoScene(self):
+		self.pars.Timestop = int(self.Loaded[1,'timestop'].val)
 		for fop in ops('scene_*'):
 			self.GoTable(fop)
+
+	def GoTracks(self):
+		cmd = str(self.Loaded[1,'tracks'].val)
+		try:
+			op.Tracker.par[cmd].pulse()
+		except:
+			pass
+
+	def GoTimer(self):
+		cmd = str(self.Loaded[1,'timer'].val)
+		try:
+			op.Roundtimer.par[cmd].pulse()
+		except:
+			pass
 
 	def GoGraphics(self):
 		rendercue = self.Loaded[1,'rendering'].val

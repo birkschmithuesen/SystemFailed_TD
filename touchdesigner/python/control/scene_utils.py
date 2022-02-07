@@ -24,15 +24,20 @@ class Utils:
 		self.Files = ownerComp.ops('*file')
 
 	def WriteSnapshot(self, components = []):
+		folder = self.pars.Livefolder.eval()
+		mod.os.makedirs(f'{project.folder}/{folder}', exist_ok=True)
 		if len(components):
 			for comp in components:
 				fop = op(f'{comp}_writelive')
-				fop.par.write.pulse()
+				handle = fop.par.file.eval()
+				fop.save(handle)
 				# fop.save(fop.par.file.val, createFolders=True)
 		else:
 			for fop in self.Writes:
 				# fop.save(fop.par.file.val, createFolders=True)
 				fop.par.write.pulse()
+				handle = fop.par.file.eval()
+				fop.save(handle)
 
 	def Write(self, components = []):
 		folder = self.pars.Livefolder.eval()
@@ -41,10 +46,12 @@ class Utils:
 			for comp in components:
 				fop = op(f'{comp}_file')
 				# fop.save(fop.par.file.val, createFolders=True)
-				fop.par.writepulse.pulse()
+				handle = fop.par.file.eval()
+				fop.save(handle)
 		else:
 			for fop in self.Files:
-				fop.par.writepulse.pulse()
+				handle = fop.par.file.eval()
+				fop.save(handle)
 				# fop.save(fop.par.file.val, createFolders=True)
 
 	def Load(self, components = []):

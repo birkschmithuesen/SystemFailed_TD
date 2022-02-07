@@ -10,10 +10,11 @@ def onValueChange(par, prev):
 	val = par.eval()
 	# debug(f'activation: {track.par.Trackid}, {val}')
 	if val:
-		debug(f'deactivate {track.par.Trackid}')
+		# debug(f'deactivate {track.par.Trackid}')
+		track.Reset()
 		track.par.Timestamp.val = absTime.seconds
 	else:
-		debug(f'activate {track.par.Trackid}')
+		# debug(f'activate {track.par.Trackid}')
 		track.Reset()
 	# use par.eval() to get current value
 	return

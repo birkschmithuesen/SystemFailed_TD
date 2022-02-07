@@ -1,7 +1,0 @@
-parameter	value	path	enable
-Synth	1	/SystemFailed/sound	1
-Warning	1	/SystemFailed/sound	1
-Freeze	1	/SystemFailed/sound	1
-Benched	1	/SystemFailed/sound	1
-Noises	1	/SystemFailed/sound	1
-Scene		/SystemFailed/sound	1

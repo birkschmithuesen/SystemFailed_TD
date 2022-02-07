@@ -1,6 +1,0 @@
-parameter	value	path	enable
-Basescore	50	/SystemFailed/tracker	1
-Scenerated	1	/SystemFailed/tracker	1
-Polltoggle	0	/SystemFailed/tracker	1
-Randomround	0	/SystemFailed/tracker	1
-Neighboursactive	1	/SystemFailed/tracker	1
