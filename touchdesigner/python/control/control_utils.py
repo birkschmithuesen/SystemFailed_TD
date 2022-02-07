@@ -104,7 +104,7 @@ class Utils:
 			op.Sound.SendSoundtrack()
 		else:
 			soundTrack = str(soundTrack).split(' ')			
-			op.Sound.SendSoundtrack(subtype = soundTrack[0], trigger = soundTrack[1])
+			op.Sound.SendSoundtrack(subtype = soundTrack[0], trigger = int(soundTrack[1]))
 		if not soundIntro == '':
 			op.Sound.SendIntro(soundIntro)
 		if not soundEval == '':

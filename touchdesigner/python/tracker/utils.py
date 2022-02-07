@@ -57,11 +57,13 @@ class Utils:
 		self.PassPulse('Unfreezesilent')
 		self.PassPulse('Unstrike')
 		self.PassPulse('Resetscore')
+		self.PassPulse('Unstrike')
 		self.PassPulse('Resetrecord')
 		op.Control.par.Timestop = 1
 		self.ready = 1
 
 	def StartRound(self):
+		self.PassPulse('Unstrike')
 		if not self.ready:
 			self.InitRound()
 		op('group_profile').par.Startrecord.pulse()

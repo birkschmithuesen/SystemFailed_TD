@@ -114,8 +114,7 @@ class Utils:
 		return
 
 	def SendSoundLocalized(self, subtype, slot = 0, trigger = 1, posx = 0, posy = 0):
-		if self.pars['Noises']:
-			self.SendAbleton(f'/sound/{subtype}', [int(slot),int(trigger), float(posx), float(posy)])
+		self.SendAbleton(f'/sound/{subtype}', [int(slot),int(trigger), float(posx), float(posy)])
 		return
 
 	def SendSynthSingle(self, pitch = 1, level = 0, posx = 0, posy = 0):
