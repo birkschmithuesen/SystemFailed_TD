@@ -6,8 +6,10 @@
 # Make sure the corresponding toggle is enabled in the Parameter Execute DAT.
 
 def onValueChange(par, prev):
-	parent.track.par.Unfreezesilent.pulse()
-	parent.track.par.Unbenchsilent.pulse()
+	if parent.track.par.Freeze.eval():
+		parent.track.par.Unfreezesilent.pulse()
+	if parent.track.par.Benched.eval():
+		parent.track.par.Unbenchsilent.pulse()
 	# use par.eval() to get current value
 	return
 
