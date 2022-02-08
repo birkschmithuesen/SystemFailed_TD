@@ -19,6 +19,13 @@ def onValuesChanged(changes):
 	return
 
 def onPulse(par):
+	if (not parent.freeze.par.Grace.eval()) and (not parent.freeze.par.Benched.eval()):
+		ft = op('freezetimer')
+		ft.par.gotodone.pulse()
+		ft.par.play = 1
+		run(op('script_freezesound')[0,0].val, delayFrames = 2)
+		run(op('script_freezeposition')[0,0].val, delayFrames = 2)
+		op('violationgrace').par.start.pulse()
 	return
 
 def onExpressionChange(par, val, prev):

@@ -20,6 +20,9 @@ class Utils:
 		synth1 = op('sender_synth')
 		synth2 = op('sender_synth_debug')
 		
+		self.synthSet = [i for i in range(1,51)]
+		self.synthIndex = 0
+
 		self.maxmspSenders = [maxmsp1, maxmsp2]
 		self.abletonSenders = [ableton1, ableton2]
 		self.synthSenders = [synth1, synth2]
@@ -120,6 +123,24 @@ class Utils:
 	def SendSynthSingle(self, pitch = 1, level = 0, posx = 0, posy = 0):
 		if self.pars['Synth']:
 			self.SendSynth(f'/synth', [int(pitch), float(level), float(posx), float(posy)])
+		return
+
+	def SendSynthCycle(self):
+		# self.synthSet = [i for i in range(1,51)]
+		synth = op('synth_set_dat')
+		for i in range(5): 
+			self.synthIndex = ((self.synthIndex + 1) % 50)
+			pitch = int(synth[self.synthIndex+1,'Trackid'].val)
+			# args.append(pitch)
+			level = float(synth[self.synthIndex+1,'Level'].val or 0)
+			# args.append(level)
+			posx = float(synth[self.synthIndex+1,'Positionx'].val or 0)
+			# args.append(posx)
+			posy = float(synth[self.synthIndex+1,'Positiony'].val or 0)
+			# args.append(posy)
+			op.Sound.SendSynthSingle(pitch, level, posx, posy)
+			debug(self.synthIndex+1)
+		# self.SendSynth(f'/synth', args)
 		return
 
 	def SendSynthBundle(self, args):
