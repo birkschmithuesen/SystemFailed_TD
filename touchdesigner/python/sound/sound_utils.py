@@ -154,7 +154,10 @@ class Utils:
 	def SendSoundtrack(self, subtype = '0', trigger = 1, fademillis = 3000):
 		if subtype == '0':
 			trigger = 0
-		self.SendAbleton(f'/soundtrack/{subtype}', [int(trigger), int(fademillis)])
+		if trigger == -1:
+			pass
+		else:
+			self.SendAbleton(f'/soundtrack/{subtype}', [int(trigger), int(fademillis)])
 		return
 
 	def SendTrackfail(self, pitch =1):

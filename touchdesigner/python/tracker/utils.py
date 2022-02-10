@@ -47,7 +47,9 @@ class Utils:
 		else:
 			tracks = self.tracks()
 		for track in tracks:
-			track.par[str(parname)].val = value
+			parameter = track.par[str(parname)]
+			if parameter.mode == ParMode.CONSTANT:
+				track.par[str(parname)].val = value
 
 	def Reassign(self):
 		op.Pharus.par.Reassign.pulse()
