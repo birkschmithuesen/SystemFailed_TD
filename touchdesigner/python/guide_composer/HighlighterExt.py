@@ -34,7 +34,10 @@ class HighlighterExt:
 		return
 
 	def printOutHighlights(self):
-		return str(self.highlights).replace(',','\n')
+		out = ""
+		for highlight in self.highlights.values():
+			out += str(highlight) + "\n"
+		return out
 
 	# whenever either a new ID appears or the highlightcue for an existing ID changes, we have to compose a new Highlight
 	# composing an highlight consist of:
@@ -43,21 +46,29 @@ class HighlighterExt:
 	# - (maybe trigger a new composition after a second or so)
 	# - trigger MQ-execs by osc
 	def NewHighlight(self, highlight):
+		if highlight.trackid in self.highlights:
+			self.DeleteHighlight(highlight.trackid)
 		debug(f'composing highlight for tracker {highlight.trackid}')
-		i = 0
-		lamp = None
-		while not lamp and i < 16:
-			lamp = me.ext.LampManagerExt.requestLamp(i, 'highlight')
-			i += 1
-		debug(f"got lamp {lamp}")
-		cue_table = parent.Guide.op('cue_table')
-		lamp.color = cue_table[highlight.cue, 'Color'].val
-		lamp.beam = cue_table[highlight.cue, 'Beam'].val
-		lamp.shutter = cue_table[highlight.cue, 'Shutter'].val
-		activationId = cue_table[highlight.cue, 'Activation'].val
-		debug(activationId)
-		lamp.activate(activationId)
-		highlight.lamps.append(lamp)
+		
+		for i in range(4):
+			j = (i*4)%16
+			lamp = None
+			while not lamp and j < 16:
+				lamp = me.ext.LampManagerExt.requestLamp(j, 'highlight')
+				j += 1
+			debug(f"got lamp {lamp}")
+			
+			if lamp:
+				highlight.lamps.append(lamp)
+				
+				cue_table = parent.Guide.op('cue_table')
+				lamp.color = cue_table[highlight.cue, 'Color'].val
+				lamp.beam = cue_table[highlight.cue, 'Beam'].val
+				lamp.shutter = cue_table[highlight.cue, 'Shutter'].val
+				lamp.intensity = int(cue_table[highlight.cue, 'Intensity'].val)/100.0
+				activationId = cue_table[highlight.cue, 'Activation'].val
+				lamp.activate(activationId)
+
 		self.highlights[highlight.trackid] = highlight
 		return
 
@@ -72,7 +83,8 @@ class HighlighterExt:
 
 	# whenever the position values for an ID change, we have to change the position for the respective trackers
 	def UpdatePosition(self, trackid, position):
-		#return
+		if trackid not in self.highlights:
+			return
 		highlight = self.highlights[trackid]
 		if not highlight:
 			return
@@ -91,29 +103,28 @@ class HighlighterExt:
 
 		for row in dat.rows():
 			highlight = Highlight(row)
-			if highlight.trackid == "Trackid":
+			if highlight.trackid in ["Trackid", "0"]:
 				# the heading row...
 				continue
 			
 			if highlight.trackid not in tempHighlights:
 				# complete new Highlight!
-				debug(f"{highlight} is completely new!")
+				# debug(f"{highlight} is completely new!")
 				newHighlights.append(highlight)
-				#self.NewHighlight(highlight)
 			else:
 				if tempHighlights[highlight.trackid].cue != highlight.cue:
 					# this trackid has the cue changed - so it is considered new
-					debug(f"{highlight} has a new cue-type!")
+					# debug(f"{highlight} has a new cue-type!")
 					newHighlights.append(highlight)
-					#self.NewHighlight(highlight)
 				else:
 					# if this trackid had a highlight before AND had the same cue, it is considered already existent
-					debug(f"{highlight} already there")
+					# debug(f"{highlight} already there")
+					pass
 
 				del tempHighlights[highlight.trackid]
 			
 		for oldHighlight in tempHighlights:
-			debug(f"deleting {tempHighlights[oldHighlight]}")
+			# debug(f"deleting {tempHighlights[oldHighlight]}")
 			self.DeleteHighlight(oldHighlight)
 
 		for newHighlight in newHighlights:

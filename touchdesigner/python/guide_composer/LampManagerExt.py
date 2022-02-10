@@ -13,10 +13,11 @@ class Lamp:
 	def __init__(self, lampId):
 		self.purpose = None
 		self.lampId = lampId
-		self.level = 1.0
+		self._intensity = 1.0
 		self.activationId = None
 		self._trackerPosition = {'x':0, 'y':0, 'z':0}
 		self.oscSender = parent.Guide.op('./oscout')
+		self.activated = False
 
 	def __repr__(self):
 		return f"lamp#{self.lampId} has purpose {self.purpose}"
@@ -36,7 +37,7 @@ class Lamp:
 	@color.setter
 	def color(self, value):
 		self._colorId = value
-		oscMessage = f'/exec/14/{value}'
+		oscMessage = f'/exec/14/{int(value) + self.lampId}'
 		self.oscSender.sendOSC(oscMessage, [int(100)], useNonStandardTypes=True)
 
 	@property
@@ -46,7 +47,7 @@ class Lamp:
 	@shutter.setter
 	def shutter(self, value):
 		self._shutterId = value
-		oscMessage = f'/exec/12/{value}'
+		oscMessage = f'/exec/12/{int(value) + self.lampId}'
 		self.oscSender.sendOSC(oscMessage, [int(100)], useNonStandardTypes=True)
 
 	@property
@@ -56,18 +57,33 @@ class Lamp:
 	@beam.setter
 	def beam(self, value):
 		self._beamId = value
-		oscMessage = f'/exec/12/{value}'
+		oscMessage = f'/exec/12/{int(value) + self.lampId}'
 		self.oscSender.sendOSC(oscMessage, [int(100)], useNonStandardTypes=True)
+
+	@property
+	def intensity(self):
+		return self._intensity
+
+	@intensity.setter
+	def intensity(self, value):
+		value = float(value)
+		if value > 1.0:
+			value = 1.0
+		self._intensity = value
+		if self.activated: 
+			self.activate(self.activationId)
 
 
 	def activate(self, activationId):
 		self.activationId = int(activationId)
 		act_ex = f'/exec/13/{int(activationId) + self.lampId}'
-		self.oscSender.sendOSC(act_ex, [self.level], useNonStandardTypes=True)
+		self.oscSender.sendOSC(act_ex, [self.intensity], useNonStandardTypes=True)
+		self.activated = True
 
 	def deactivate(self):
 		act_ex = f'/exec/13/{self.activationId + self.lampId}'
 		self.oscSender.sendOSC(act_ex, [0], useNonStandardTypes=True)
+		self.activated = False
 		self.activationId = None
 
 
@@ -98,7 +114,7 @@ class LampManagerExt:
 
 	def requestLamp(self, lampId, purpose):
 		lamp = self.lamps[lampId]
-		debug(lampId, lamp)
+		# debug(lampId, lamp)
 		if lamp.purpose:
 			return None
 		else:
