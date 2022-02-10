@@ -147,14 +147,14 @@ class Utils:
 		self.SendSynth(f'/synth', args)
 		return
 
-	def SendSynthtoggle(self, trigger = 1):
-		self.SendSynth(f'/synthtoggle', [trigger])
+	def SendSynthtoggle(self, trigger = 1, fademillis = 3000):
+		self.SendMaxmsp(f'/synthtoggle', [int(trigger), int(fademillis)])
 		return
 
-	def SendSoundtrack(self, subtype = '0', trigger = 1):
+	def SendSoundtrack(self, subtype = '0', trigger = 1, fademillis = 3000):
 		if subtype == '0':
 			trigger = 0
-		self.SendAbleton(f'/soundtrack/{subtype}', [trigger])
+		self.SendAbleton(f'/soundtrack/{subtype}', [int(trigger), int(fademillis)])
 		return
 
 	def SendTrackfail(self, pitch =1):

@@ -21,7 +21,7 @@ class Utils:
 		op.Scene.Load()
 		op.Scene.Go()
 		self.GoScene()
-		self.GoGraphics()
+		# self.GoGraphics()
 		self.GoSound()
 		self.GoTracks()
 		self.GoTimer()
@@ -110,15 +110,19 @@ class Utils:
 		soundIntro =  str(self.Loaded[1,'soundintro'].val)
 		soundEval = str(self.Loaded[1,'soundeval'].val)
 		soundRound = str(self.Loaded[1,'soundround'].val)
-		soundSynth = int(self.Loaded[1,'soundsynth'].val or 0)
-		soundTrack = (self.Loaded[1,'soundtrack'].val or 0)
+		soundSynth = (self.Loaded[1,'soundsynth'].val or False)
+		soundTrack = (self.Loaded[1,'soundtrack'].val or False)
 		op.Sound.SendScene(scene)
-		op.Sound.SendSynthtoggle(soundSynth)
-		if soundTrack == 0:
-			op.Sound.SendSoundtrack()
+		if soundSynth:
+			args = soundSynth.split(' ')
+			op.Sound.SendSynthtoggle(trigger = args[0], fademillis = args[1])
 		else:
-			soundTrack = str(soundTrack).split(' ')			
-			op.Sound.SendSoundtrack(subtype = soundTrack[0], trigger = int(soundTrack[1]))
+			op.Sound.SendSynthtoggle(soundSynth)
+		if soundTrack:
+			args = soundTrack.split(' ')			
+			op.Sound.SendSoundtrack(subtype = args[0], trigger = int(args[1]), fademillis = args[2])
+		else:
+			op.Sound.SendSoundtrack()
 		if not soundIntro == '':
 			op.Sound.SendIntro(soundIntro)
 		if not soundEval == '':
