@@ -1,5 +1,5 @@
 scene	cue	follow	name	label	tracks	behavior	timestop	timer	soundintro	soundeval	soundround	soundtrack	soundsynth	rendering	colorset	
-preparation	0.10	0.15	register	0.10 register	Reset	default	1							0.00		
+preparation	0.10	0.15	register	0.10 register	Reset	default	1	Reinit						0.00		
 preparation	0.15	0.20	walkin	0.15 walkin			1							0.00		
 preparation	0.20	0.30	field	0.20 field			1							0.20		
 preparation	0.30	0.40	boundaries	0.30 boundaries			1							0.20		
@@ -11,34 +11,35 @@ prolog	1.30	1.40	boot	1.30 boot			1		boot					0.50
 prolog	1.40	2.10	platforms	1.40 platforms			1						1 2000	1.40		
 polls	2.10	2.20	experimentstart	2.10 experimentstart			1		poll					1.40		
 polls	2.20	3.04	poll	2.20 poll			1						1 2000	2.20		
-association	3.04	3.05	association_sound	3.04 assoc sound	Initround	default	1		scores					3.04		
-association	3.05	3.10	association_intro	3.05 association intro	Initround	default	1		association					3.05		
-association	3.10	3.16	association_ruleset	3.10 association ruleset	Startround		0	Goround				01 1 2000	1 2000	3.10		
-association	3.16	4.04	association_countdown	3.16 association countdown			0	Gocd			countdown	01 -1 2000	1 2000	3.10		
-association	3.30	3.40	association_lab	3.30 association lab	Stopround		1	Reinit		1				3.30		
-association	3.40	3.41	association_selection1	3.40 association selection 1			1							3.40		
-association	3.41	3.42	association_selection1	3.41 association selection 2			1							3.41		
-association	3.42	3.43	association_selection1	3.42 association selection 3			1							3.42		
-association	3.43	3.44	association_profile1	3.43 association profile 1			1							3.43		
-association	3.44	3.45	association_profile2	3.44 association profile 2			1							3.44		
-association	3.45	4.04	association_profile3	3.45 association profile 3			1							3.45		
-movement	4.00	4.04	movement_load	4.00 movement load	Initround	default	1	Reinit						4.00		
-movement	4.04	4.05	movement_splashscreen	4.04 movement splash	Initround	default	1	Reinit						4.04		
-movement	4.05	4.10	movement_intro	4.05 movement intro	Initround	default	1	Reinit	movement					4.05		
-movement	4.10	4.12	movement_ruleset	4.10 movement ruleset	Startround		0	Goround				02 1 2000		4.10		
-movement	4.12	4.14	movement_plateau1	4.12 movement plateau 1			0				plateau	02 2 2000		4.10		
-movement	4.14	4.16	movement_plateau2	4.14 movement plateau 2			0				plateau	02 3 2000		4.10		
-movement	4.16	4.30	movement_countdown	4.16 movement countdown		default	0	Gocd			countdown	02 -1 2000		4.10		
-movement	4.20	4.30	movement_conform	4.20 movement conform	Stopround	conform	1				conformbehavior	02 -1 2000		4.20		
-movement	4.25	4.30	movement_rebel	4.25 movement rebel	Stopround	rebel	1				rebelbehavior			4.25		
-movement	4.30	4.40	movement_lab	4.30 movement lab	Stopround		1			1				4.30		
-movement	4.40	4.43	movement_profilegroup	4.40 movement profile group			1							4.40		
-movement	4.43	4.44	movement_profilebest	4.43 movement profile best			1							4.43		
-movement	4.44	5.00	movement_profileworst	4.44 movement profile worst			1							4.44		
-movement	4.45	5.00	movement_profilemiddle	4.45 movement profile middle			1							4.45		
-distance	5.00	5.04	distance_load	5.0 distance load	Initround	default	1	Reinit						5.00		
-distance	5.04	5.05	distance_splash	5.04 distance splash	Initround	default	1	Reinit						5.04		
-distance	5.05	5.10	distance_intro	5.05 distance intro	Initround	default	1	Reinit	distance					5.05		
+association	3.00	3.04	assoc load	3.00 assoc load	Initround	default	1	Reinit								
+association	3.04	3.05	association_score	3.04 assoc splash			1		scores					3.04		
+association	3.05	3.10	association_intro	3.05 assoc intro			1		association					3.05		
+association	3.10	3.16	association_ruleset	3.10 assoc ruleset	Startround	default	0	Goround				01 1 2000	1 2000	3.10		
+association	3.16	4.04	association_countdown	3.16 assoc countdown		default	0	Gocd			countdown	01 -1 2000	1 2000	3.10		
+association	3.30	3.40	association_lab	3.30 assoc lab	Stopround		1	Reinit		1				3.30		
+association	3.40	3.41	association_selection1	3.40 assoc selection 1			1							3.40		
+association	3.41	3.42	association_selection1	3.41 assoc selection 2			1							3.41		
+association	3.42	3.43	association_selection1	3.42 assoc selection 3			1							3.42		
+association	3.43	3.44	association_profile1	3.43 assoc profile 1			1							3.43		
+association	3.44	3.45	association_profile2	3.44 assoc profile 2			1							3.44		
+association	3.45	4.04	association_profile3	3.45 assoc profile 3			1							3.45		
+movement	4.00	4.04	movement_load	4.00 mov load	Initround	default	1	Reinit						4.00		
+movement	4.04	4.05	movement_splashscreen	4.04 mov splash			1	Reinit						4.04		
+movement	4.05	4.10	movement_intro	4.05 mov intro			1	Reinit	movement					4.05		
+movement	4.10	4.14	movement_ruleset	4.10 mov ruleset	Startround	default	0	Goround				02 1 2000		4.10		
+movement	4.12	4.14	movement_plateau1	4.12 mov plateau 1			0				plateau	02 2 2000		4.10		
+movement	4.14	4.16	movement_plateau2	4.14 mov plateau 2			0				plateau	02 3 2000		4.10		
+movement	4.16	4.30	movement_countdown	4.16 mov countdown		default	0	Gocd			countdown	02 -1 2000		4.10		
+movement	4.20	4.30	movement_conform	4.20 mov conform	Stopround	conform	1				conformbehavior	02 -1 2000		4.20		
+movement	4.25	4.30	movement_rebel	4.25 mov rebel	Stopround	rebel	1				rebelbehavior			4.25		
+movement	4.30	4.40	movement_lab	4.30 mov lab	Stopround		1			1				4.30		
+movement	4.40	4.43	movement_profilegroup	4.40 mov profile group			1							4.40		
+movement	4.43	4.44	movement_profileworst	4.43 mov profile worst			1							4.43		
+movement	4.44	5.00	movement_profilebest	4.44 mov profile best			1							4.44		
+movement	4.45	5.00	movement_profilemiddle	4.45 mov profile middle			1							4.45		
+distance	5.00	5.04	distance_load	5.00 dist load	Initround	default	1	Reinit						5.00		
+distance	5.04	5.05	distance_splash	5.04 dist splash	Initround	default	1	Reinit						5.04		
+distance	5.05	5.10	distance_intro	5.05 dist intro	Initround	default	1	Reinit	distance					5.05		
 distance	5.10	5.12	distance_ruleset	5.10 distance ruleset	Startround		0	Goround				03 1 2000		5.10		
 distance	5.12	5.14	distance_plateau1	5.12 distance plateau 1			0				plateau	03 2 2000		5.10		
 distance	5.14	5.16	distance_plateau2	5.14 distance plateau 2			0				plateau	03 3 2000		5.10		
@@ -59,8 +60,8 @@ prediction	6.20	6.30	prediction_conform	6.20 prediction_conform	Stopround	confor
 prediction	6.25	6.30	prediction_rebel	6.25 prediction_rebel	Stopround	rebel	1				rebelbehavior			6.10		
 prediction	6.30	6.40	prediction_lab	6.30 prediction_lab	Stopround		1			1				6.30		
 prediction	6.40	6.43	prediction_groupprofile	6.40 prediction_groupprofile			1							6.40		
-prediction	6.43	7.00	prediction_profilebest	6.43 prediction_profilebest			1							6.43		
-prediction	6.43	7.00														
+prediction	6.43	6.44	prediction_profilebest	6.43 prediction_profilebest			1							6.43		
+prediction	6.44	7.00	prediction_profilemiddle	6.44 prediction_profilemiddle			1									
 custom	7.00	7.04	custom_load	7.00 custom_load			1	Reinit						7.00		
 custom	7.04	7.05	custom_splash	7.04 custom_splash			1	Reinit						7.04		
 custom	7.05	7.10	custom_intro	7.05 custom_intro			1	Reinit	custom					7.04		
@@ -71,8 +72,11 @@ custom	7.21	7.30	custom_poll_assoc	7.21 custom_poll_assoc			1							7.21
 custom	7.30	7.31	custom_question_mov	7.30 custom_question_mov			1							7.30		
 custom	7.31	7.40	custom_poll_mov	7.31 custom_poll_mov			1							7.31		
 custom	7.40	7.41	custom_question_pred	7.40 custom_question_pred			1							7.40		
-custom	7.41	7.50	custom_poll_pred	7.41 custom_poll_pred			1							7.41		
-custom	7.50	8.10	custom_reset	7.50 custom_reset			1				reset			7.50		
+custom	7.41	7.54	custom_poll_pred	7.41 custom_poll_pred			1							7.41		
+custom	7.54	7.55	custom_splash	custom splash	Initround		1	Reinit								
+custom	7.55	7.60	custom_intro	custom intro	Initround		1									
+custom	7.60	7.70	custom_round	custom round	Startround		1						1 2000			
+custom	7.70	8.10	custom_reset	7.50 custom_reset	Stopround		1				reset			7.50		
 epilog	8.10	8.20	epilog_black	8.10 epilog_talk			1							8.10		
 epilog	8.20	8.20	epilog_black	8.20 epilog_black			1							8.20		
 joker	23	23	joker	joker			1									
