@@ -19,13 +19,16 @@ class Utils:
 		ableton2 = op('sender_debug_ableton')
 		synth1 = op('sender_synth')
 		synth2 = op('sender_synth_debug')
-		
+		zap1 = op('sender_zap')
+		zap2 = op('sender_zap_debug')
+
 		self.synthSet = [i for i in range(1,51)]
 		self.synthIndex = 0
 
 		self.maxmspSenders = [maxmsp1, maxmsp2]
 		self.abletonSenders = [ableton1, ableton2]
 		self.synthSenders = [synth1, synth2]
+		self.zapSenders = [zap1, zap2]
 		self.zaps = dict()
 		self.zUnassigned = set(range(10))
 		self.strobes = dict()
@@ -33,6 +36,12 @@ class Utils:
 
 	def SendMaxmsp(self, message, args):
 		for s in self.maxmspSenders:
+			# debug(f'{self.ownerComp} sending osc on {s}:\n {message}, {args}')
+			s.sendOSC(message, args, asBundle=False, useNonStandardTypes=True)
+		return
+
+	def SendZap(self, message, args):
+		for s in self.zapSenders:
 			# debug(f'{self.ownerComp} sending osc on {s}:\n {message}, {args}')
 			s.sendOSC(message, args, asBundle=False, useNonStandardTypes=True)
 		return
@@ -117,7 +126,7 @@ class Utils:
 		return
 
 	def SendSoundLocalized(self, subtype, slot = 0, trigger = 1, posx = 0, posy = 0):
-		self.SendSynth(f'/sound/{subtype}', [int(slot),int(trigger), float(posx), float(posy)])
+		self.SendZap(f'/sound/{subtype}', [int(slot),int(trigger), float(posx), float(posy)])
 		return
 
 	def SendSynthSingle(self, pitch = 1, level = 0, posx = 0, posy = 0):
@@ -181,7 +190,7 @@ class Utils:
 				# RETRIGGER
 				slotid = zaps[tid][0]
 				zaps[tid] = (slotid, tmp[tid][0], tmp[tid][1], tmp[tid][2])
-				debug(f'zap retrigger {zaps[tid]}')
+				# debug(f'zap retrigger {zaps[tid]}')
 				self.SendSoundLocalized(subtype='zap', slot=slotid, trigger=-1, posx=zaps[tid][2], posy=zaps[tid][3])
 			else: 
 				if len(self.zUnassigned) == 0:
@@ -189,7 +198,7 @@ class Utils:
 				# TRIGGER
 				slotid = self.zUnassigned.pop()
 				zaps[tid] = (slotid, tmp[tid][0], tmp[tid][1], tmp[tid][2])
-				debug(f'zap trigger {zaps[tid]}')
+				# debug(f'zap trigger {zaps[tid]}')
 				self.SendSoundLocalized(subtype='zap', slot=slotid, trigger=1, posx=zaps[tid][2], posy=zaps[tid][3])
 		for tid in zaps.keys():
 			if not (tid in tmp.keys()):
