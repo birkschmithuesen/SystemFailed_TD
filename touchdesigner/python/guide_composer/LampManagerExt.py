@@ -8,19 +8,26 @@ can be accessed externally, e.g. op('yourComp').PromotedFunction().
 Help: search "Extensions" in wiki
 """
 
-
 class Lamp:
-	def __init__(self, lampId):
-		self.purpose = None
-		self.lampId = lampId
-		self._intensity = 1.0
-		self.activationId = None
-		self._trackerPosition = {'x':0, 'y':0, 'z':0}
+	def __init__(self, lampId, position):
 		self.oscSender = parent.Guide.op('./oscout')
+		self.lampId = lampId
 		self.activated = False
+		self.position = position
+		self.purpose = None
+		self.zoom = 1.0
+		self.intensity = 1.0
+		self.activationId = 0
+		self.trackerPosition = {'x':0, 'y':0, 'z':0}
+		self.color = 0
+		self.beam = 0
+		self.shutter = 0
 
 	def __repr__(self):
 		return f"lamp#{self.lampId} has purpose {self.purpose}"
+
+	def dist(self, a, b):
+		return math.sqrt((a['x']-b['x'])**2 + (a['y']-b['y'])**2 + (a['z']-b['z'])**2)
 
 	@property
 	def trackerPosition(self):
@@ -29,6 +36,27 @@ class Lamp:
 	@trackerPosition.setter
 	def trackerPosition(self, value):
 		self._trackerPosition = value
+		# calculate distance to tracker
+		dist = self.dist(value, self.position)
+
+		# calculate zoom to achieve size (r = 1200mm...75mm)
+		# spikie zoom 27°...4°
+		#  tan (alpha/2) = r/dist
+		# alpha = 2 * atan (r/dist)
+		r = 1200 - self.zoom * (1200-75)
+		alpha = 2 * math.atan(r/dist) / math.pi * 180
+		if alpha > 27:
+			zoomFactor = 0.0
+		elif alpha < 4:
+			zoomFactor = 1.0
+		else:
+			zoomFactor = (27-alpha)/23
+
+		# set size (if activated)
+		if self.activated:
+			# TODO osc-set zoom
+			pass
+		return
 
 	@property
 	def color(self):
@@ -71,12 +99,37 @@ class Lamp:
 			value = 1.0
 		self._intensity = value
 		if self.activated: 
-			self.activate(self.activationId)
+			self.activate()
+
+	@property
+	def zoom(self):
+		return self._zoom
+
+	@zoom.setter
+	def zoom(self, value):
+		value = float(value)
+		if value > 1.0:
+			value = 1.0
+		self._zoom = value
+		if self.activated: 
+			# TODO: call zoom-executor
+			pass
+
+	@property
+	def activationId(self):
+		return self._activationId
+
+	@activationId.setter
+	def activationId(self, value):
+		if value:
+			self._activationId = int(value)
+		else:
+			self._activationId = 0
 
 
-	def activate(self, activationId):
-		self.activationId = int(activationId)
-		act_ex = f'/exec/13/{int(activationId) + self.lampId}'
+	def activate(self):
+		act_ex = f'/exec/13/{self.activationId + self.lampId}'
+		debug(act_ex)
 		self.oscSender.sendOSC(act_ex, [self.intensity], useNonStandardTypes=True)
 		self.activated = True
 
@@ -84,8 +137,6 @@ class Lamp:
 		act_ex = f'/exec/13/{self.activationId + self.lampId}'
 		self.oscSender.sendOSC(act_ex, [0], useNonStandardTypes=True)
 		self.activated = False
-		self.activationId = None
-
 
 	def sendTracker(self):
 		mqSender = parent.Guide.op('./mqout')
@@ -106,7 +157,8 @@ class LampManagerExt:
 	def __init__(self, ownerComp):
 		# The component to which this extension is attached
 		self.ownerComp = ownerComp
-		self.lamps = {i: Lamp(i) for i in range(16)}
+		self.lampTable = parent.Guide.op('spikies')
+		self.lamps = {i: Lamp(i, {'x':float(self.lampTable[i, 2].val), 'y':float(self.lampTable[i, 3].val), 'z':float(self.lampTable[i, 4].val)}) for i in range(16)}
 
 	def printOutLamps(self):
 		return str(self.lamps).replace(',','\n') 

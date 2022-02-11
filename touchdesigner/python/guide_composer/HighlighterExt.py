@@ -14,9 +14,78 @@ class Highlight:
 		self.cue = row[16].val
 		self.position = {'x': row[6].val, 'y': row[5].val, 'z': row[7].val}
 		self.lamps = []
+		self._intensity = None
+		self.intensity = 0
+		self.activationId = None
+		self.zoom = 1.0
 
 	def __repr__(self):
-		return f"highlight for {self.trackid} / cue {self.cue} with lamps {[lamp.lampId for lamp in self.lamps]}"
+		return f"highlight for {self.trackid} / cue {self.cue} with lamps {[lamp.lampId for lamp in self.lamps]} @ {self.intensity:.2f}/{self.zoom:.2f}"
+	
+	@property
+	def intensity(self):
+		return self._intensity
+
+	@intensity.setter
+	def intensity(self, value):
+		prev = self._intensity
+		if value == prev:
+			return
+		self._intensity = value
+		for lamp in self.lamps:
+			lamp.intensity = value
+		if value == 0:
+			self.releaseLamps()
+		if prev == 0:
+			self.acquireLamps()
+
+
+	@property
+	def zoom(self):
+		return self._zoom
+
+	@zoom.setter
+	def zoom(self, value):
+		self._zoom = value
+		for lamp in self.lamps:
+			lamp.zoom = value
+
+	def acquireLamps(self):
+		# TODO this can be nicer and more INTELLIGENT!
+		debug(f'composing highlight for tracker {self.trackid}')
+		amount = 4 if int(self.cue) < 6 else 2
+		for i in range(amount):
+			j = (i*math.floor(16/amount))%16
+			lamp = None
+			# TODO: ask for every lamp in the order of priority, not just up to nr.16
+			while not lamp and j < 16:
+				lamp = me.ext.LampManagerExt.requestLamp(j, 'highlight')
+				j += 1
+			debug(f"got lamp {lamp}")
+			if lamp:
+				self.lamps.append(lamp)
+			self.setLampsFromCueTable()
+			self.updateLamps()
+
+
+	def setLampsFromCueTable(self):
+		cueTable = parent.Guide.op('cue_table')
+		for lamp in self.lamps:
+			lamp.color = cueTable[self.cue, 'Color'].val
+			lamp.beam = cueTable[self.cue, 'Beam'].val
+			lamp.shutter = cueTable[self.cue, 'Shutter'].val
+			lamp.activationId = cueTable[self.cue, 'Activation'].val
+
+	def updateLamps(self):
+		for lamp in self.lamps:
+			lamp.intensity = self.intensity
+			lamp.activate()
+
+	def releaseLamps(self):
+		for lamp in self.lamps:
+			me.ext.LampManagerExt.releaseLamp(lamp.lampId)
+		self.lamps.clear()
+
 
 class HighlighterExt:
 	"""
@@ -26,6 +95,15 @@ class HighlighterExt:
 		# The component to which this extension is attached
 		self.ownerComp = ownerComp
 		self.highlights = {}
+		
+		self.cueTable = parent.Guide.op('cue_table')
+		self.cueAttributes = {}
+		# init the cue intensities with the value from the cue_table 
+		# these intensities will later be set by dmx
+		for row in self.cueTable.rows():
+			if row[0].val == "Cue": 
+				continue
+			self.cueAttributes[int(row[0].val)] = {'intensity': self.cueTable[row[0].val, 'Intensity'].val, 'zoom': 1.0}
 
 	def reset(self):
 		debug('resetting Highlighter')
@@ -39,6 +117,13 @@ class HighlighterExt:
 			out += str(highlight) + "\n"
 		return out
 
+	# to be called from the DMX-filter:
+	def setAttributeForHighlightCue(self, attributeName, cueId, value):
+		self.cueAttributes[cueId][attributeName] = value
+		for highlight in self.highlights.values():
+			if int(highlight.cue) == int(cueId):
+				setattr(highlight, attributeName, value)
+
 	# whenever either a new ID appears or the highlightcue for an existing ID changes, we have to compose a new Highlight
 	# composing an highlight consist of:
 	# - choose one or more Lamps to track the ID
@@ -46,29 +131,10 @@ class HighlighterExt:
 	# - (maybe trigger a new composition after a second or so)
 	# - trigger MQ-execs by osc
 	def NewHighlight(self, highlight):
+		debug(highlight.intensity)
 		if highlight.trackid in self.highlights:
 			self.DeleteHighlight(highlight.trackid)
-		debug(f'composing highlight for tracker {highlight.trackid}')
 		
-		for i in range(4):
-			j = (i*4)%16
-			lamp = None
-			while not lamp and j < 16:
-				lamp = me.ext.LampManagerExt.requestLamp(j, 'highlight')
-				j += 1
-			debug(f"got lamp {lamp}")
-			
-			if lamp:
-				highlight.lamps.append(lamp)
-				
-				cue_table = parent.Guide.op('cue_table')
-				lamp.color = cue_table[highlight.cue, 'Color'].val
-				lamp.beam = cue_table[highlight.cue, 'Beam'].val
-				lamp.shutter = cue_table[highlight.cue, 'Shutter'].val
-				lamp.intensity = int(cue_table[highlight.cue, 'Intensity'].val)/100.0
-				activationId = cue_table[highlight.cue, 'Activation'].val
-				lamp.activate(activationId)
-
 		self.highlights[highlight.trackid] = highlight
 		return
 
@@ -76,8 +142,7 @@ class HighlighterExt:
 	# - turn MQ-execs off by osc
 	def DeleteHighlight(self, highlightId):
 		debug(f'Deleting Highlight {highlightId}')
-		for lamp in self.highlights[highlightId].lamps:
-			me.ext.LampManagerExt.releaseLamp(lamp.lampId)
+		self.highlights[highlightId].releaseLamps()
 		del self.highlights[highlightId]
 		return
 
