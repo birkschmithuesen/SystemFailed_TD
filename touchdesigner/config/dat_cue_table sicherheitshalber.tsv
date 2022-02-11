@@ -5,8 +5,8 @@ Cue	Name	Activation	Intensity	Color	Beam	Shutter
 3						
 4						
 5	Strobe	1	100	41	161	41
-6	Strobe2	1	100	101	161	41
+6						
 7						
-9	Perform1	81	100	121	161	61
-8	Perform2	61	100	61	161	61
+8	Perform1	61	100	61	181	61
+9	Perform2	61	100	121	161	61
 10	Perform3	61	100	141	161	61
