@@ -14,7 +14,10 @@ class Lamp:
 		self.lampId = lampId
 		self.activated = False
 		self.position = position
-		self.purpose = "MQ"
+		# get from DMX-Values
+		dmxTable = parent.Guide.op('dmx_table')
+		self.purpose = "MQ" if int(dmxTable[1, self.lampId+400].val) == 0 else None
+		self.purposeId = None
 		self.zoom = 1.0
 		self.intensity = 1.0
 		self.activationId = 0
@@ -24,7 +27,7 @@ class Lamp:
 		self.shutter = 0
 
 	def __repr__(self):
-		return f"lamp#{self.lampId} has purpose {self.purpose}"
+		return f"lamp#{self.lampId} has purpose {self.purpose}#{self.purposeId}"
 
 	def dist(self, a, b):
 		return math.sqrt((a['x']-b['x'])**2 + (a['y']-b['y'])**2 + (a['z']-b['z'])**2)
@@ -163,20 +166,22 @@ class LampManagerExt:
 		return str(self.lamps).replace(',','\n') 
 
 
-	def requestLamp(self, lampId, purpose):
+	def requestLamp(self, lampId, purpose, purposeId):
 		lamp = self.lamps[lampId]
 		# debug(lampId, lamp)
 		if lamp.purpose:
 			return None
 		else:
 			lamp.purpose = purpose
+			lamp.purposeId = purposeId
 			return lamp
 
 	def releaseLamp(self, lampId):
 		lamp = self.lamps[lampId]
-		lamp.purpose = None
-		if lamp.activationId:
-			lamp.deactivate()
+		if (lamp.purpose != "MQ"):
+			lamp.purpose = None
+			if lamp.activationId:
+				lamp.deactivate()
 		return
 
 	def setLampTracker(self, lampId, position):
@@ -200,10 +205,15 @@ class LampManagerExt:
 	def setReservationForLamp(self, lampId, value):
 		debug(lampId, value)
 		lamp = self.lamps[lampId]
+		debug(lamp)
 		if lamp.purpose == "MQ" and value > 0:
 			lamp.purpose = None
+			lamp.purposeId = 0
 		if lamp.purpose != "MQ" and value == 0:
+			if lamp.purpose == "highlight":
+				me.ext.HighlighterExt.releaseLamp(lampId)
 			lamp.purpose = "MQ"
+			lamp.purposeId = 0
 
 
 

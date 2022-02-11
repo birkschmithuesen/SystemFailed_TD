@@ -14,13 +14,15 @@ class Highlight:
 		self.cue = row[16].val
 		self.position = {'x': row[6].val, 'y': row[5].val, 'z': row[7].val}
 		self.lamps = []
-		self._intensity = None
-		self.intensity = 0
+		self._intensity = 0
+		# get from DMX-Values
+		dmxTable = parent.Guide.op('dmx_table')
+		self.intensity = int(dmxTable[1, (int(self.cue)-1)*27+26].val)/255.0
 		self.activationId = None
 		self.zoom = 1.0
 
 	def __repr__(self):
-		return f"highlight for {self.trackid} / cue {self.cue} with lamps {[lamp.lampId for lamp in self.lamps]} @ {self.intensity:.2f}/{self.zoom:.2f}"
+		return f"highlight for {self.trackid} / cue {self.cue} with lamps {[lamp.lampId for lamp in self.lamps]} @ {float(self.intensity):.2f}/{float(self.zoom):.2f}"
 	
 	@property
 	def intensity(self):
@@ -59,7 +61,7 @@ class Highlight:
 			lamp = None
 			# TODO: ask for every lamp in the order of priority, not just up to nr.16
 			while not lamp and j < 16:
-				lamp = me.ext.LampManagerExt.requestLamp(j, 'highlight')
+				lamp = me.ext.LampManagerExt.requestLamp(j, 'highlight', self.trackid)
 				j += 1
 			debug(f"got lamp {lamp}")
 			if lamp:
@@ -80,6 +82,13 @@ class Highlight:
 		for lamp in self.lamps:
 			lamp.intensity = self.intensity
 			lamp.activate()
+
+	def releaseLamp(self, lampId):
+		debug(lampId)
+		for lamp in self.lamps:
+			if lamp.lampId == lampId:
+				me.ext.LampManagerExt.releaseLamp(lamp.lampId)
+				self.lamps.remove(lamp)
 
 	def releaseLamps(self):
 		for lamp in self.lamps:
@@ -117,6 +126,13 @@ class HighlighterExt:
 			out += str(highlight) + "\n"
 		return out
 
+	def releaseLamp(self, lampId):
+		lamp = me.ext.LampManagerExt.lamps[lampId]
+		highlight = self.highlights[lamp.purposeId]
+		if highlight:
+			highlight.releaseLamp(lampId)
+
+
 	# to be called from the DMX-filter:
 	def setAttributeForHighlightCue(self, attributeName, cueId, value):
 		self.cueAttributes[cueId][attributeName] = value
@@ -131,7 +147,6 @@ class HighlighterExt:
 	# - (maybe trigger a new composition after a second or so)
 	# - trigger MQ-execs by osc
 	def NewHighlight(self, highlight):
-		debug(highlight.intensity)
 		if highlight.trackid in self.highlights:
 			self.DeleteHighlight(highlight.trackid)
 		
@@ -167,10 +182,10 @@ class HighlighterExt:
 		newHighlights = []
 
 		for row in dat.rows():
-			highlight = Highlight(row)
-			if highlight.trackid in ["Trackid", "0"]:
+			if row[0].val in ["Trackid", "0"]:
 				# the heading row...
 				continue
+			highlight = Highlight(row)
 			
 			if highlight.trackid not in tempHighlights:
 				# complete new Highlight!
