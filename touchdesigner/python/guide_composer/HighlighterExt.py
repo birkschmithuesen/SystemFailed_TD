@@ -19,7 +19,7 @@ class Highlight:
 		dmxTable = parent.Guide.op('dmx_table')
 		self.intensity = int(dmxTable[1, (int(self.cue)-1)*27+26].val)/255.0
 		self.activationId = None
-		self.zoom = 1.0
+		self.zoom = int(dmxTable[1, (int(self.cue)-1)*27+23].val)/255.0
 
 	def __repr__(self):
 		return f"highlight for {self.trackid} / cue {self.cue} with lamps {[lamp.lampId for lamp in self.lamps]} @ {float(self.intensity):.2f}/{float(self.zoom):.2f}"
@@ -41,7 +41,6 @@ class Highlight:
 		if prev == 0:
 			self.acquireLamps()
 
-
 	@property
 	def zoom(self):
 		return self._zoom
@@ -55,7 +54,7 @@ class Highlight:
 	def acquireLamps(self):
 		# TODO this can be nicer and more INTELLIGENT!
 		debug(f'composing highlight for tracker {self.trackid}')
-		amount = 4 if int(self.cue) < 6 else 2
+		amount = 1 if int(self.cue) < 6 else 2
 		for i in range(amount):
 			j = (i*math.floor(16/amount))%16
 			lamp = None

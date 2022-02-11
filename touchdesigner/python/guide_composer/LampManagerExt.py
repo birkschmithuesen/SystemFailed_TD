@@ -18,13 +18,14 @@ class Lamp:
 		dmxTable = parent.Guide.op('dmx_table')
 		self.purpose = "MQ" if int(dmxTable[1, self.lampId+400].val) == 0 else None
 		self.purposeId = None
-		self.zoom = 1.0
+		self.zoom = 0.5
 		self.intensity = 1.0
 		self.activationId = 0
 		self.trackerPosition = {'x':0, 'y':0, 'z':0}
 		self.color = 0
 		self.beam = 0
 		self.shutter = 0
+		self.oscThrottelCounter = 0
 
 	def __repr__(self):
 		return f"lamp#{self.lampId} has purpose {self.purpose}#{self.purposeId}"
@@ -40,7 +41,7 @@ class Lamp:
 	def trackerPosition(self, value):
 		self._trackerPosition = value
 		# calculate distance to tracker
-		dist = self.dist(value, self.position)
+		dist = 1000 * self.dist(value, self.position)
 
 		# calculate zoom to achieve size (r = 1200mm...75mm)
 		# spikie zoom 27°...4°
@@ -48,17 +49,22 @@ class Lamp:
 		# alpha = 2 * atan (r/dist)
 		r = 1200 - self.zoom * (1200-75)
 		alpha = 2 * math.atan(r/dist) / math.pi * 180
+		debug(dist, r, alpha)
 		if alpha > 27:
 			zoomFactor = 0.0
 		elif alpha < 4:
 			zoomFactor = 1.0
 		else:
-			zoomFactor = (27-alpha)/23
+			zoomFactor = ((27-alpha)/23)
 
 		# set size (if activated)
 		if self.activated:
-			# TODO osc-set zoom
-			pass
+			self.oscThrottelCounter += 1
+			if self.oscThrottelCounter%2 == 0:			
+				zoom_ex = f'/exec/15/{self.lampId+1}'
+				debug(zoom_ex, [self._zoom*zoomFactor*0.999999], self.zoom, zoomFactor)
+				#if we send 1.0 the value in MQ is going to 0
+				self.oscSender.sendOSC(zoom_ex, [self._zoom*zoomFactor*0.999999], useNonStandardTypes=True)
 		return
 
 	@property
@@ -131,13 +137,16 @@ class Lamp:
 
 	def activate(self):
 		act_ex = f'/exec/13/{self.activationId + self.lampId}'
-		debug(act_ex)
-		self.oscSender.sendOSC(act_ex, [self.intensity], useNonStandardTypes=True)
+		debug("x",act_ex)
+		#self.oscSender.sendOSC(act_ex, [self.intensity], useNonStandardTypes=True)
+		self.oscSender.sendOSC(act_ex, [int(100)], useNonStandardTypes=True)
+		parent.Guide.op('./oscout1').sendOSC(act_ex, [int(100)], useNonStandardTypes=True)
 		self.activated = True
 
 	def deactivate(self):
 		act_ex = f'/exec/13/{self.activationId + self.lampId}'
 		self.oscSender.sendOSC(act_ex, [0], useNonStandardTypes=True)
+		parent.Guide.op('./oscout1').sendOSC(act_ex, [0], useNonStandardTypes=True)
 		self.activated = False
 
 	def sendTracker(self):

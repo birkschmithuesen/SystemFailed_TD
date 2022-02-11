@@ -1,7 +1,7 @@
 Cue	Name	Activation	Intensity	Color	Beam	Shutter
 0	Off	1	0	1	161	41
 1	Accent	61	30	81	161	61
-2						
+2	Test	1	100	41	161	61
 3						
 4						
 5	Strobe	1	100	41	161	41
