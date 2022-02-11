@@ -27,10 +27,10 @@ movement	4.00	4.04	movement_load	4.00 mov load	Initround	default	1	Reinit						4
 movement	4.04	4.05	movement_splashscreen	4.04 mov splash			1	Reinit						4.04		
 movement	4.05	4.10	movement_intro	4.05 mov intro			1	Reinit	movement					4.05		
 movement	4.10	4.14	movement_ruleset	4.10 mov ruleset	Startround	default	0	Goround				02 1 2000		4.10		
-movement	4.12	4.14	movement_plateau1	4.12 mov plateau 1			0				plateau	02 2 2000		4.10		
-movement	4.14	4.16	movement_plateau2	4.14 mov plateau 2			0				plateau	02 3 2000		4.10		
+movement	4.12	4.14	movement_plateau1	4.12 mov plateau 1			0				plateau	02 2 0		4.10		
+movement	4.14	4.16	movement_plateau2	4.14 mov plateau 2			0				plateau	02 3 0		4.10		
 movement	4.16	4.30	movement_countdown	4.16 mov countdown		default	0	Gocd			countdown	02 -1 2000		4.10		
-movement	4.20	4.30	movement_conform	4.20 mov conform	Stopround	conform	1				conformbehavior	02 -1 2000		4.20		
+movement	4.20	4.30	movement_conform	4.20 mov conform	Stopround	conform	1				conformbehavior			4.20		
 movement	4.25	4.30	movement_rebel	4.25 mov rebel	Stopround	rebel	1				rebelbehavior			4.25		
 movement	4.30	4.40	movement_lab	4.30 mov lab	Stopround		1			1				4.30		
 movement	4.40	4.43	movement_profilegroup	4.40 mov profile group			1							4.40		
@@ -41,8 +41,8 @@ distance	5.00	5.04	distance_load	5.00 dist load	Initround	default	1	Reinit						
 distance	5.04	5.05	distance_splash	5.04 dist splash	Initround	default	1	Reinit						5.04		
 distance	5.05	5.10	distance_intro	5.05 dist intro	Initround	default	1	Reinit	distance					5.05		
 distance	5.10	5.12	distance_ruleset	5.10 distance ruleset	Startround		0	Goround				03 1 2000		5.10		
-distance	5.12	5.14	distance_plateau1	5.12 distance plateau 1			0				plateau	03 2 2000		5.10		
-distance	5.14	5.16	distance_plateau2	5.14 distance plateau 2			0				plateau	03 3 2000		5.10		
+distance	5.12	5.14	distance_plateau1	5.12 distance plateau 1			0				plateau	03 2 0		5.10		
+distance	5.14	5.16	distance_plateau2	5.14 distance plateau 2			0				plateau	03 3 0		5.10		
 distance	5.16	5.30	distance_countdown	5.16 distance countdown		default	0	Gocd			countdown	03 -1 2000		5.10		
 distance	5.20	5.30	distance_conform	5.20 distance conform	Stopround	conform	1				conformbehavior			5.10		
 distance	5.25	5.30	distance_rebel	5.25 distance rebel	Stopround	rebel	1				rebelbehavior			5.10		
@@ -74,7 +74,7 @@ custom	7.31	7.40	custom_poll_mov	7.31 custom_poll_mov			1							7.31
 custom	7.40	7.41	custom_question_pred	7.40 custom_question_pred			1							7.40		
 custom	7.41	7.54	custom_poll_pred	7.41 custom_poll_pred			1							7.41		
 custom	7.54	7.55	custom_splash	custom splash	Initround		1	Reinit								
-custom	7.55	7.60	custom_intro	custom intro	Initround		1									
+custom	7.55	7.60	custom_intro	custom intro	Initround		1		playcustom							
 custom	7.60	7.70	custom_round	custom round	Startround		1						1 2000			
 custom	7.70	8.10	custom_reset	7.50 custom_reset	Stopround		1				reset			7.50		
 epilog	8.10	8.20	epilog_black	8.10 epilog_talk			1							8.10		
