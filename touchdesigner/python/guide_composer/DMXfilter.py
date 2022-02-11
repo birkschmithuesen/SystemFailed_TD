@@ -36,11 +36,15 @@ def onCellChange(dat, cells, prev):
 		chan = channel%27
 	
 		# set intensity-channels
-		if chan == 25:
+		if chan == 25 and head <10:
 			op('lamps').ext.HighlighterExt.setAttributeForHighlightCue('intensity', head+1, int(cell.val)/255)
 		# set zoom
-		if chan == 22:
+		if chan == 22 and head <10:
 			op('lamps').ext.HighlighterExt.setAttributeForHighlightCue('zoom', head+1, int(cell.val)/255)
+
+		if channel in range(400,416):
+			#print(f'channel {channel} @ {cell.val}')
+			op('lamps').ext.LampManagerExt.setReservationForLamp(channel-400, int(cell.val)/255)
 
 	return
 

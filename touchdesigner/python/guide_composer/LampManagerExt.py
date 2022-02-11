@@ -14,7 +14,7 @@ class Lamp:
 		self.lampId = lampId
 		self.activated = False
 		self.position = position
-		self.purpose = None
+		self.purpose = "MQ"
 		self.zoom = 1.0
 		self.intensity = 1.0
 		self.activationId = 0
@@ -126,7 +126,6 @@ class Lamp:
 		else:
 			self._activationId = 0
 
-
 	def activate(self):
 		act_ex = f'/exec/13/{self.activationId + self.lampId}'
 		debug(act_ex)
@@ -193,6 +192,19 @@ class LampManagerExt:
 		for lampId in self.lamps:
 			self.releaseLamp(lampId)
 		return
+
+	# to be called from the DMX-filter:
+	# value > 0 -> use for anything
+	# value = 0 -> don't use! MQ wants it
+	# TODO: when lamp has a purpose at the moment, find a replacement
+	def setReservationForLamp(self, lampId, value):
+		debug(lampId, value)
+		lamp = self.lamps[lampId]
+		if lamp.purpose == "MQ" and value > 0:
+			lamp.purpose = None
+		if lamp.purpose != "MQ" and value == 0:
+			lamp.purpose = "MQ"
+
 
 
 
