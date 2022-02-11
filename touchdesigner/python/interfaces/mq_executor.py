@@ -47,6 +47,7 @@ def onValuesChanged(changes):
 	act = table[str(cue),'Activation'].val
 	act_ex = f'/exec/13/{int(act)+gid}'
 	osc.sendOSC(act_ex, [float(level)], useNonStandardTypes=True)
+	parent.Guide.op('./oscout').sendOSC(act_ex, [float(level)], useNonStandardTypes=True)
 	return
 
 def onPulse(par):
