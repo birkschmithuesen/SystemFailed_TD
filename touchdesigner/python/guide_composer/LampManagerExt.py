@@ -26,6 +26,8 @@ class Lamp:
 		self.beam = 0
 		self.shutter = 0
 		self.oscThrottelCounter = 0
+		self.priority = 0
+		self.requester = None
 
 	def __repr__(self):
 		return f"lamp#{self.lampId} has purpose {self.purpose}#{self.purposeId}"
@@ -49,7 +51,7 @@ class Lamp:
 		# alpha = 2 * atan (r/dist)
 		r = 1200 - self.zoom * (1200-75)
 		alpha = 2 * math.atan(r/dist) / math.pi * 180
-		debug(dist, r, alpha)
+		#debug(dist, r, alpha)
 		if alpha > 27:
 			zoomFactor = 0.0
 		elif alpha < 4:
@@ -60,9 +62,9 @@ class Lamp:
 		# set size (if activated)
 		if self.activated:
 			self.oscThrottelCounter += 1
-			if self.oscThrottelCounter%2 == 0:			
+			if self.oscThrottelCounter%12 == 0:			
 				zoom_ex = f'/exec/15/{self.lampId+1}'
-				debug(zoom_ex, [self._zoom*zoomFactor*0.999999], self.zoom, zoomFactor)
+				#debug(zoom_ex, [self._zoom*zoomFactor*0.999999], self.zoom, zoomFactor)
 				#if we send 1.0 the value in MQ is going to 0
 				self.oscSender.sendOSC(zoom_ex, [self._zoom*zoomFactor*0.999999], useNonStandardTypes=True)
 		return
@@ -137,16 +139,19 @@ class Lamp:
 
 	def activate(self):
 		act_ex = f'/exec/13/{self.activationId + self.lampId}'
-		debug("x",act_ex)
-		#self.oscSender.sendOSC(act_ex, [self.intensity], useNonStandardTypes=True)
-		self.oscSender.sendOSC(act_ex, [int(100)], useNonStandardTypes=True)
-		parent.Guide.op('./oscout1').sendOSC(act_ex, [int(100)], useNonStandardTypes=True)
+		#debug(act_ex)
+		self.oscSender.sendOSC(act_ex, [self.intensity], useNonStandardTypes=True)
+		#self.oscSender.sendOSC(act_ex, [int(100)], useNonStandardTypes=True)
+		#parent.Guide.op('./oscout1').sendOSC(act_ex, [int(100)], useNonStandardTypes=True)
 		self.activated = True
 
 	def deactivate(self):
 		act_ex = f'/exec/13/{self.activationId + self.lampId}'
 		self.oscSender.sendOSC(act_ex, [0], useNonStandardTypes=True)
-		parent.Guide.op('./oscout1').sendOSC(act_ex, [0], useNonStandardTypes=True)
+		#parent.Guide.op('./oscout1').sendOSC(act_ex, [0], useNonStandardTypes=True)
+		zoom_ex = f'/exec/15/{self.lampId+1}'
+		#debug(zoom_ex, [0])
+		self.oscSender.sendOSC(zoom_ex, [0], useNonStandardTypes=True)
 		self.activated = False
 
 	def sendTracker(self):
@@ -170,17 +175,87 @@ class LampManagerExt:
 		self.ownerComp = ownerComp
 		self.lampTable = parent.Guide.op('spikies')
 		self.lamps = {i: Lamp(i, {'x':float(self.lampTable[i, 2].val), 'y':float(self.lampTable[i, 3].val), 'z':float(self.lampTable[i, 4].val)}) for i in range(16)}
+		self.requestQueue = {}
+		self.requestQueueLocked = False
 
 	def printOutLamps(self):
 		return str(self.lamps).replace(',','\n') 
 
+	def reset(self):
+		self.requestQueue = {}
+		self.releaseAll()
 
-	def requestLamp(self, lampId, purpose, purposeId):
+	def requestLamps(self, requester, purpose, purposeId, maxAmount, priority):
+		# 1. look for idle Lamps
+		# 2. look for lamps with lower prio
+		# 3. look for lamps with same prio (but automatically older)
+		# and return them (and mark theam in a way)
+		# if there are still lamps missing, add to queue (and eventually process the queue)
+		self.requestQueueLocked = True
+		retLamps = []
+		for prio in (0, priority, priority + 1):
+			missing = maxAmount - len(retLamps)
+			for i in range(missing):
+				j0 = (i*math.floor(16/maxAmount))%16
+				lamp = None
+				j = j0
+				while not lamp and j < (j0+16):
+					candidate = self.lamps[j%16]
+					# debug(lampId, lamp)
+					if not candidate.purpose or prio > candidate.priority:
+						lamp = candidate
+						if lamp.requester:
+							#self.addToRequestQueue(lamp.requester, 'highlight', lamp.requester.trackid, lamp.requester.maxAmount, lamp.requester.priority)
+							lamp.requester.releaseLamp(lamp.lampId)
+						lamp.requester = requester
+						lamp.purpose = purpose
+						lamp.purposeId = purposeId
+						lamp.priority = priority
+						retLamps.append(lamp)
+					j += 1
+				debug(f"got lamp {lamp}")
+		if len(retLamps) < maxAmount:
+			pass
+			#self.addToRequestQueue(requester, purpose, purposeId, maxAmount, priority)
+		self.requestQueueLocked = False
+		return retLamps
+
+	def addToRequestQueue(self, requester, purpose, purposeId, maxAmount, priority):
+		if priority not in self.requestQueue:
+			self.requestQueue[priority] = []
+		self.requestQueue[priority].append(requester)
+
+
+	def removeFromRequestQueue(self, requester):
+		if requester in self.requestQueue[requester.priority]:
+			self.requestQueue[requester.priority].remove(requester)
+		if len(self.requestQueue[requester.priority]) == 0:
+			del self.requestQueue[requester.priority]
+
+	def processRequestQueue(self):
+		if self.requestQueueLocked:
+			return
+		lamps = []
+		if len(self.requestQueue) > 0:
+			requester = self.requestQueue[max(self.requestQueue.keys())].pop(0)
+			self.removeFromRequestQueue(requester)
+			requestAmount = requester.maxAmount-len(requester.lamps)
+			lamps = self.requestLamps(requester, 'highlight', requester.trackid, requestAmount, requester.priority)
+			requester.addLamps(lamps)
+		# if it gave something try next...
+		if len(lamps) > 0:
+			self.processRequestQueue()
+
+
+	def requestLamp(self, lampId, purpose, purposeId, priority, requester):
 		lamp = self.lamps[lampId]
 		# debug(lampId, lamp)
-		if lamp.purpose:
+		if lamp.purpose and lamp.priority > priority:
 			return None
 		else:
+			if lamp.purpose and lamp.requester:
+				lamp.requester.releaseLamp(lamp.lampId)
+			lamp.requester = requester
 			lamp.purpose = purpose
 			lamp.purposeId = purposeId
 			return lamp
@@ -189,8 +264,10 @@ class LampManagerExt:
 		lamp = self.lamps[lampId]
 		if (lamp.purpose != "MQ"):
 			lamp.purpose = None
+			lamp.requester = None
 			if lamp.activationId:
 				lamp.deactivate()
+		#self.processRequestQueue()
 		return
 
 	def setLampTracker(self, lampId, position):

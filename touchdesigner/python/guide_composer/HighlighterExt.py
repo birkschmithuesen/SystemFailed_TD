@@ -11,7 +11,10 @@ Help: search "Extensions" in wiki
 class Highlight:
 	def __init__(self, row):
 		self.trackid = row[0].val
-		self.cue = row[16].val
+		self.cue = row[17].val
+		self.priority = int(row[19].val)
+		self.cueTable = parent.Guide.op('cue_table')
+		self.maxAmount = int(self.cueTable[self.cue, 'Amount'].val)
 		self.position = {'x': row[6].val, 'y': row[5].val, 'z': row[7].val}
 		self.lamps = []
 		self._intensity = 0
@@ -51,31 +54,47 @@ class Highlight:
 		for lamp in self.lamps:
 			lamp.zoom = value
 
+	def addLamps(self, lamps):
+		for lamp in lamps:
+			self.lamps.append(lamp)
+		self.setLampsFromCueTable()
+		self.updateLamps()
+
+
 	def acquireLamps(self):
+		self.lamps = me.ext.LampManagerExt.requestLamps(self, 'highlight', self.trackid, self.maxAmount, self.priority)
+		self.setLampsFromCueTable()
+		self.updateLamps()
+		return
+
 		# TODO this can be nicer and more INTELLIGENT!
+		# and it should actually happen in the LampManager
 		debug(f'composing highlight for tracker {self.trackid}')
-		amount = 1 if int(self.cue) < 6 else 2
-		for i in range(amount):
-			j = (i*math.floor(16/amount))%16
-			lamp = None
-			# TODO: ask for every lamp in the order of priority, not just up to nr.16
-			while not lamp and j < 16:
-				lamp = me.ext.LampManagerExt.requestLamp(j, 'highlight', self.trackid)
-				j += 1
-			debug(f"got lamp {lamp}")
-			if lamp:
-				self.lamps.append(lamp)
-			self.setLampsFromCueTable()
-			self.updateLamps()
+		# first look for available Lamps, second for lamps with lower prio
+		for x in range(3):
+			priority = (0, self.priority, self.priority + 1)[x]
+			for i in range(self.maxAmount):
+				j0 = (i*math.floor(16/self.maxAmount))%16
+				lamp = None
+				j = j0
+				while not lamp and j < (j0+16):
+					lamp = me.ext.LampManagerExt.requestLamp(j, 'highlight', self.trackid, priority, self)
+					j += 1
+				debug(f"got lamp {lamp}")
+				if lamp:
+					lamp.priority = self.priority
+					self.lamps.append(lamp)
+
+		self.setLampsFromCueTable()
+		self.updateLamps()
 
 
 	def setLampsFromCueTable(self):
-		cueTable = parent.Guide.op('cue_table')
 		for lamp in self.lamps:
-			lamp.color = cueTable[self.cue, 'Color'].val
-			lamp.beam = cueTable[self.cue, 'Beam'].val
-			lamp.shutter = cueTable[self.cue, 'Shutter'].val
-			lamp.activationId = cueTable[self.cue, 'Activation'].val
+			lamp.color = self.cueTable[self.cue, 'Color'].val
+			lamp.beam = self.cueTable[self.cue, 'Beam'].val
+			lamp.shutter = self.cueTable[self.cue, 'Shutter'].val
+			lamp.activationId = self.cueTable[self.cue, 'Activation'].val
 
 	def updateLamps(self):
 		for lamp in self.lamps:
@@ -116,7 +135,7 @@ class HighlighterExt:
 	def reset(self):
 		debug('resetting Highlighter')
 		self.highlights = {}
-		me.ext.LampManagerExt.releaseAll()
+		me.ext.LampManagerExt.reset()
 		return
 
 	def printOutHighlights(self):
@@ -181,26 +200,29 @@ class HighlighterExt:
 		newHighlights = []
 
 		for row in dat.rows():
-			if row[0].val in ["Trackid", "0"]:
+			trackid = row[0].val
+			cue = row[17].val
+			if trackid in ["Trackid", "0"]:
 				# the heading row...
 				continue
-			highlight = Highlight(row)
-			
-			if highlight.trackid not in tempHighlights:
+			#highlight = Highlight(row)
+			if trackid not in tempHighlights:
 				# complete new Highlight!
-				# debug(f"{highlight} is completely new!")
+				highlight = Highlight(row)
+				debug(f"{highlight} is completely new!")
 				newHighlights.append(highlight)
 			else:
-				if tempHighlights[highlight.trackid].cue != highlight.cue:
+				if tempHighlights[trackid].cue != cue:
 					# this trackid has the cue changed - so it is considered new
-					# debug(f"{highlight} has a new cue-type!")
+					highlight = Highlight(row)
+					debug(f"{highlight} has a new cue-type!")
 					newHighlights.append(highlight)
 				else:
 					# if this trackid had a highlight before AND had the same cue, it is considered already existent
-					# debug(f"{highlight} already there")
+					debug(f"highlight for {trackid} already there")
 					pass
 
-				del tempHighlights[highlight.trackid]
+				del tempHighlights[trackid]
 			
 		for oldHighlight in tempHighlights:
 			# debug(f"deleting {tempHighlights[oldHighlight]}")
