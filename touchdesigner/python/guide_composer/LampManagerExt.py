@@ -62,7 +62,7 @@ class Lamp:
 		# set size (if activated)
 		if self.activated:
 			self.oscThrottelCounter += 1
-			if self.oscThrottelCounter%12 == 0:			
+			if self.oscThrottelCounter%2 == 0:			
 				zoom_ex = f'/exec/15/{self.lampId+1}'
 				#debug(zoom_ex, [self._zoom*zoomFactor*0.999999], self.zoom, zoomFactor)
 				#if we send 1.0 the value in MQ is going to 0
@@ -162,6 +162,9 @@ class Lamp:
 		y = self.trackerPosition['z'] #-float(pars.Positiony.eval())
 		z = -1*self.trackerPosition['y'] #float(pars.Height.eval())
 		msg = f'{x:.2f},{y:.2f},{z:.2f},{gid},Tracker:{tid}'
+		mqSender.send(msg)
+		mqSender.send(msg)
+		mqSender.send(msg)
 		mqSender.send(msg)
 
 
