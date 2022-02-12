@@ -22,9 +22,9 @@ def onPulse(par):
 	if (par.name == 'Reassign'):
 		op.Pharus.par.Reassign.pulse()
 	elif (par.name == 'Reset'):
-		parent().PassPulse(par.name)
+		op.Tracker.PassPulse(par.name)
 	elif (par.name == 'Performreset'):
-		parent().SetVal('Performer',0)
+		op.Tracker.SetVal('Performer',0)
 	return
 
 def onExpressionChange(par, val, prev):
