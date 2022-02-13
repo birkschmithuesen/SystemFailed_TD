@@ -36,8 +36,8 @@ movement	4.10.2	4.12	movement_ruleset2	4.10 mov ruleset2			0					02 -1 2000
 movement	4.12	4.14	movement_plateau1	4.12 mov plateau 1			0				plateau	02 2 0			
 movement	4.14	4.16	movement_plateau2	4.14 mov plateau 2			0				plateau	02 3 0			
 movement	4.16	4.30	movement_countdown	4.16 mov countdown		default	0	Gocd			countdown	02 -1 2000			
-movement	4.20	4.30	movement_conform	4.20 mov conform	Stopround	conform	1				conformbehavior				
-movement	4.25	4.30	movement_rebel	4.25 mov rebel	Stopround	rebel	1				rebelbehavior				
+movement	4.20	4.30	movement_conform	4.20 mov conform		conform	1				conformbehavior				
+movement	4.25	4.30	movement_rebel	4.25 mov rebel		rebel	1				rebelbehavior				
 movement	4.30	4.40	movement_lab	4.30 mov lab	Stopround		1			1					
 movement	4.40	4.43	movement_profilegroup	4.40 mov profile group			1								
 movement	4.43	4.44	movement_profileworst	4.43 mov profile worst			1								
@@ -53,8 +53,8 @@ distance	5.10.2	5.12	distance_ruleset2	5.10 distance ruleset2			0					03 -1 2000
 distance	5.12	5.14	distance_plateau1	5.12 distance plateau 1			0				plateau	03 2 0			
 distance	5.14	5.16	distance_plateau2	5.14 distance plateau 2			0				plateau	03 3 0			
 distance	5.16	5.30	distance_countdown	5.16 distance countdown		default	0	Gocd			countdown	03 -1 2000			
-distance	5.20	5.30	distance_conform	5.20 distance conform	Stopround	conform	1				conformbehavior				
-distance	5.25	5.30	distance_rebel	5.25 distance rebel	Stopround	rebel	1				rebelbehavior				
+distance	5.20	5.30	distance_conform	5.20 distance conform		conform	1				conformbehavior				
+distance	5.25	5.30	distance_rebel	5.25 distance rebel		rebel	1				rebelbehavior				
 distance	5.30	5.40	distance_lab	5.30 distance lab	Stopround		1			1					
 distance	5.40	5.43	distance_profilegroup	5.40 distance profile group			1								
 distance	5.43	5.44	distance_profilebest	5.43 distance profile best			1								
@@ -68,8 +68,8 @@ prediction	6.10.0	6.10.1	prediction_ruleset1	6.10 prediction ruleset1	Startround
 prediction	6.10.1	6.10.2	prediction_repeat	6.10 prediction repeat			0		predictionrepeat			04 -1 2000			
 prediction	6.10.2	6.16	prediction_ruleset2	6.10 prediction ruleset2			0					04 -1 2000			
 prediction	6.16	6.30	prediction_countdown	6.16 prediction countdown		default	0	Gocd			countdown	04 -1 2000			
-prediction	6.20	6.30	prediction_conform	6.20 prediction_conform	Stopround	conform	0				conformbehavior				
-prediction	6.25	6.30	prediction_rebel	6.25 prediction_rebel	Stopround	rebel	1				rebelbehavior				
+prediction	6.20	6.30	prediction_conform	6.20 prediction_conform		conform	0				conformbehavior				
+prediction	6.25	6.30	prediction_rebel	6.25 prediction_rebel		rebel	1				rebelbehavior				
 prediction	6.30	6.40	prediction_lab	6.30 prediction_lab	Stopround		1			1					
 prediction	6.40	6.43	prediction_groupprofile	6.40 prediction_groupprofile			1								
 prediction	6.43	6.44	prediction_profilebest	6.43 prediction_profilebest			1								

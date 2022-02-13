@@ -55,6 +55,7 @@ class Utils:
 		op.Pharus.par.Reassign.pulse()
 
 	def InitRound(self):
+		op('group_profile').par.Stoprecord.pulse()
 		op('group_profile').par.Resetrecord.pulse()
 		self.PassPulse('Unfreezesilent')
 		self.PassPulse('Unstrike')
