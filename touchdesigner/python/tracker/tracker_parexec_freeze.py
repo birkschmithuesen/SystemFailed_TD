@@ -19,7 +19,7 @@ def onValuesChanged(changes):
 	return
 
 def onPulse(par):
-	parent().PassPulse(par.name)
+	parent.Tracker.PassPulse(par.name)
 	return
 
 def onExpressionChange(par, val, prev):

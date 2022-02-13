@@ -22,7 +22,8 @@ class Utils:
 		self.Answers = ownerComp.op('answers_dat')
 
 	def UpdateRecord(self):
-		qr = int(self.ownerComp.par.Question)
+		qr = int(self.ownerComp.par.Question.eval())
+		debug(f'updating {qr}')
 		qident = self.Questions.row(qr)[0]
 		record = self.ownerComp.op(f'record_{qident}')
 		answers = self.Answers.rows()

@@ -8,6 +8,8 @@ class Utils:
 	def __init__(self, ownerComp):
 		self.ownerComp = ownerComp
 		self.pars = ownerComp.par
+		self.Loaded = ownerComp.op('./loaded_cue')
+		self.Sceneloader = op.Scene
 
 	def Pause(self):
 		self.pars.Timestop.val = 1
@@ -15,10 +17,45 @@ class Utils:
 	def Unpause(self):
 		self.pars.Timestop.val = 0
 
+	def Go(self):
+		op.Scene.Load()
+		op.Scene.Go()
+		self.GoScene()
+		# self.GoGraphics()
+		self.GoSound()
+		self.GoTracks()
+		self.GoTimer()
+		self.GoBehavior()
+
+	def GoTo(self, cueIndex):
+		sop = op.Scene
+		target = tdu.clamp(int(cueIndex), 1, (sop.par.Size.eval() - 1))
+		sop.par.Index.val = target
+		self.Go()
+
+	def Arm(self):
+		self.Sceneloader.par.Index.val = int(self.pars.Preloadindex.eval())
+
+	def GoRelative(self, step):
+		sop = op.Scene.par
+		curi = sop.Index.eval()
+		nexti = tdu.clamp((curi + step), 1, (sop.Size - 1))
+		sop.Index = nexti
+		self.Go()
+
+	def GoNext(self):
+		target = int(self.pars.Followindex.eval())
+		self.GoTo(target)
+
+	def GoBack(self):
+		target = int(self.pars.Previousindex.eval())
+		self.GoTo(target)
+
 	def EndSkip(self, delay = 15):
-		self.Pause()
-		run('op.Control.par.Endround.pulse()', delayFrames = 30*delay)
-		run('op.Control.Unpause()', delayFrames = 30*delay)
+		# self.Pause()
+		# run('op.Control.par.Endround.pulse()', delayFrames = 30*delay)
+		# run('op.Control.Unpause()', delayFrames = 30*delay)
+		pass
 
 	def GoTable(self, ref):
 		table = op(ref)
@@ -26,18 +63,70 @@ class Utils:
 			name = table[i,'parameter']
 			value = table[i,'value']
 			path = table[i,'path']
-			op(path).par[name].val = value
+			op(path).par[name] = value
 			pass
 
 	def GoScene(self):
-		scene = str(self.ownerComp.par.Ident.eval())
+		self.pars.Timestop = int(self.Loaded[1,'timestop'].val)
 		for fop in ops('scene_*'):
-			GoTable(fop)
+			self.GoTable(fop)
+
+	def GoBehavior(self):
+		behavior = self.Loaded[1,'behavior'].val
+		if not behavior == '':
+			if behavior == 'default':
+				op.Group.par.Roundfinishearly.val = 0
+				op.Group.par.Roundfinishcriticalmass.val = 0
+			elif behavior == 'conform':
+				op.Group.par.Roundfinishearly.val = 1
+				op.Group.par.Roundfinishcriticalmass.val = 0
+			elif behavior == 'rebel':
+				op.Group.par.Roundfinishearly.val = 1
+				op.Group.par.Roundfinishcriticalmass.val = 1
+
+	def GoTracks(self):
+		cmd = str(self.Loaded[1,'tracks'].val)
+		try:
+			op.Tracker.par[cmd].pulse()
+		except:
+			pass
+
+	def GoTimer(self):
+		cmd = str(self.Loaded[1,'timer'].val)
+		try:
+			op.Roundtimer.par[cmd].pulse()
+		except:
+			pass
+
+	def GoGraphics(self):
+		rendercue = self.Loaded[1,'rendering'].val
+		colorcue = self.Loaded[1,'colorset'].val
+		# debug(rendercue)
+		op.Rendercl.Recall_Cue(rendercue)
+		#op.Colorcl.Recall_Cue(colorcue)
+
+	def GoSound(self):
+		scene = self.Loaded[1,'scene']
+		soundIntro =  str(self.Loaded[1,'soundintro'].val)
+		soundEval = str(self.Loaded[1,'soundeval'].val)
+		soundRound = str(self.Loaded[1,'soundround'].val)
+		soundSynth = (self.Loaded[1,'soundsynth'].val or False)
+		soundTrack = (self.Loaded[1,'soundtrack'].val or False)
 		op.Sound.SendScene(scene)
-
-	def Black(self):
-		self.GoTable('graphics_black')
-
-	def Defaults(self):
-		self.GoTable('graphics_platformdefault')
-
+		if soundSynth:
+			args = soundSynth.split(' ')
+			op.Sound.SendSynthtoggle(trigger = args[0], fademillis = args[1])
+		else:
+			op.Sound.SendSynthtoggle(soundSynth)
+		if soundTrack:
+			args = soundTrack.split(' ')			
+			op.Sound.SendSoundtrack(subtype = args[0], trigger = int(args[1]), fademillis = args[2])
+		else:
+			op.Sound.SendSoundtrack()
+		if not soundIntro == '':
+			op.Sound.SendIntro(soundIntro)
+		if not soundEval == '':
+			op.Sound.SendEvaluationStart()
+		if not soundRound == '':
+			op.Sound.SendRound(soundRound)
+		

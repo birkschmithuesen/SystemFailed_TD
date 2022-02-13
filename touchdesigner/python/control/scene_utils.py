@@ -18,29 +18,41 @@ class Utils:
 	def __init__(self, ownerComp):
 		# The component to which this extension is attached
 		self.ownerComp = ownerComp
+		self.pars = ownerComp.par
 		self.Grabs = ownerComp.ops('*readlive')
 		self.Writes = ownerComp.ops('*writelive')
 		self.Files = ownerComp.ops('*file')
 
 	def WriteSnapshot(self, components = []):
+		folder = self.pars.Livefolder.eval()
+		mod.os.makedirs(f'{project.folder}/{folder}', exist_ok=True)
 		if len(components):
 			for comp in components:
 				fop = op(f'{comp}_writelive')
-				fop.par.write.pulse()
+				handle = fop.par.file.eval()
+				fop.save(handle)
 				# fop.save(fop.par.file.val, createFolders=True)
 		else:
 			for fop in self.Writes:
 				# fop.save(fop.par.file.val, createFolders=True)
 				fop.par.write.pulse()
+				handle = fop.par.file.eval()
+				fop.save(handle)
 
 	def Write(self, components = []):
+		folder = self.pars.Livefolder.eval()
+		mod.os.makedirs(f'{project.folder}/{folder}', exist_ok=True)
 		if len(components):
 			for comp in components:
 				fop = op(f'{comp}_file')
-				fop.save(fop.par.file.val, createFolders=True)
+				# fop.save(fop.par.file.val, createFolders=True)
+				handle = fop.par.file.eval()
+				fop.save(handle)
 		else:
 			for fop in self.Files:
-				fop.save(fop.par.file.val, createFolders=True)
+				handle = fop.par.file.eval()
+				fop.save(handle)
+				# fop.save(fop.par.file.val, createFolders=True)
 
 	def Load(self, components = []):
 		if len(components):
@@ -53,12 +65,9 @@ class Utils:
 	def Go(self, components = []):
 		if len(components):
 			for comp in components:
+				# e.g. 'guide_file' -> 'guide'
 				op(comp).copy(f'{comp}_file')
-		for fop in self.Files:
-			# e.g. 'guide_file' -> 'guide'
-			go = self.ownerComp.op(fop.name.split('_')[0])
-			op(go).copy(fop)
-
-	def GoToTable(self, handle):
-		table = op(handle)
-		return
+		else:
+			for fop in self.Files:
+				go = self.ownerComp.op(fop.name.split('_')[0])
+				op(go).copy(fop)

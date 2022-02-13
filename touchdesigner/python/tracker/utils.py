@@ -47,39 +47,46 @@ class Utils:
 		else:
 			tracks = self.tracks()
 		for track in tracks:
-			track.par[str(parname)].val = value
+			parameter = track.par[str(parname)]
+			if parameter.mode == ParMode.CONSTANT:
+				track.par[str(parname)].val = value
+
+	def Reassign(self):
+		op.Pharus.par.Reassign.pulse()
 
 	def InitRound(self):
+		op('group_profile').par.Stoprecord.pulse()
 		op('group_profile').par.Resetrecord.pulse()
 		self.PassPulse('Unfreezesilent')
 		self.PassPulse('Unstrike')
 		self.PassPulse('Resetscore')
+		self.PassPulse('Unstrike')
 		self.PassPulse('Resetrecord')
-		self.SetVal('Timestop', 1)
+		op.Control.par.Timestop = 1
 		self.ready = 1
 
 	def StartRound(self):
-		op('group_profile').par.Resetrecord.pulse()
-		op('group_profile').par.Startrecord.pulse()
+		self.PassPulse('Unstrike')
 		if not self.ready:
 			self.InitRound()
+		op('group_profile').par.Startrecord.pulse()
 		self.PassPulse('Startrecord')
-		self.SetVal('Timestop', 0)
+		op.Control.par.Timestop = 0
 		self.ready = 0
 		pass
 
 	def PauseRound(self):
-		self.SetVal('Timestop', 1)
+		op.Control.par.Timestop = 1
 		pass
 
 	def ResumeRound(self):
-		self.SetVal('Timestop', 0)
+		op.Control.par.Timestop = 0
 		pass
 
 	def StopRound(self):
+		op.Control.par.Timestop = 1
 		op('group_profile').par.Stoprecord.pulse()
 		op('group_profile').par.Updatetrail.pulse()
-		self.SetVal('Timestop', 1)
 		self.PassPulse('Capturehighscore')
 		self.PassPulse('Stoprecord')
 		self.PassPulse('Updatetrail')

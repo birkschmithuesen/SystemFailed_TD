@@ -19,7 +19,9 @@ def onValuesChanged(changes):
 	return
 
 def onPulse(par):
-	if par.name == 'Startround':
+	if par.name == 'Initround':
+		parent().InitRound()
+	elif par.name == 'Startround':
 		parent().StartRound()
 	elif par.name == 'Pauseround':
 		parent().PauseRound()

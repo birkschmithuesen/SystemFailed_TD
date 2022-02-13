@@ -19,7 +19,12 @@ def onValuesChanged(changes):
 	return
 
 def onPulse(par):
-	parent().PassPulse(par.name)
+	if (par.name == 'Reassign'):
+		op.Pharus.par.Reassign.pulse()
+	elif (par.name == 'Reset'):
+		op.Tracker.PassPulse(par.name)
+	elif (par.name == 'Performreset'):
+		op.Tracker.SetVal('Performer',0)
 	return
 
 def onExpressionChange(par, val, prev):

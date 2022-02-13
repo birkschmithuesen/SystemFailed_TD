@@ -9,7 +9,7 @@ import TDFunctions as TDF
 class Utils:
 	"""
 	Utils for the SystemFailed Sound comp
-	"""
+	""" 
 	def __init__(self, ownerComp):
 		self.ownerComp = ownerComp
 		self.pars = ownerComp.par
@@ -17,9 +17,18 @@ class Utils:
 		maxmsp2 = op('sender_debug_maxmsp')
 		ableton1 = op('sender_ableton')
 		ableton2 = op('sender_debug_ableton')
-		
+		synth1 = op('sender_synth')
+		synth2 = op('sender_synth_debug')
+		zap1 = op('sender_zap')
+		zap2 = op('sender_zap_debug')
+
+		self.synthSet = [i for i in range(1,51)]
+		self.synthIndex = 0
+
 		self.maxmspSenders = [maxmsp1, maxmsp2]
-		self.abletonSenders = [ableton1, ableton2] 
+		self.abletonSenders = [ableton1, ableton2]
+		self.synthSenders = [synth1, synth2]
+		self.zapSenders = [zap1, zap2]
 		self.zaps = dict()
 		self.zUnassigned = set(range(10))
 		self.strobes = dict()
@@ -31,8 +40,20 @@ class Utils:
 			s.sendOSC(message, args, asBundle=False, useNonStandardTypes=True)
 		return
 
+	def SendZap(self, message, args):
+		for s in self.zapSenders:
+			# debug(f'{self.ownerComp} sending osc on {s}:\n {message}, {args}')
+			s.sendOSC(message, args, asBundle=False, useNonStandardTypes=True)
+		return
+
 	def SendAbleton(self, message, args):
 		for s in self.abletonSenders:
+			# debug(f'{self.ownerComp} sending osc on {s}:\n {message}, {args}')
+			s.sendOSC(message, args, asBundle=False, useNonStandardTypes=True)
+		return
+
+	def SendSynth(self, message, args):
+		for s in self.synthSenders:
 			# debug(f'{self.ownerComp} sending osc on {s}:\n {message}, {args}')
 			s.sendOSC(message, args, asBundle=False, useNonStandardTypes=True)
 		return
@@ -55,7 +76,7 @@ class Utils:
 		self.SendMaxmsp(msg, args)
 		return
 
-	def SendRound(self, subtype, arguments):
+	def SendRound(self, subtype, arguments = [1]):
 		msg = f'/round/{subtype}'
 		args = [int(a) for a in arguments]
 		self.SendAbleton(msg, args)
@@ -105,13 +126,47 @@ class Utils:
 		return
 
 	def SendSoundLocalized(self, subtype, slot = 0, trigger = 1, posx = 0, posy = 0):
-		if self.pars['Noises']:
-			self.SendAbleton(f'/sound/{subtype}', [int(slot),int(trigger), float(posx), float(posy)])
+		self.SendZap(f'/sound/{subtype}', [int(slot),int(trigger), float(posx), float(posy)])
 		return
 
-	def SendSynth(self, pitch = 1, level = 0, posx = 0, posy = 0):
+	def SendSynthSingle(self, pitch = 1, level = 0, posx = 0, posy = 0):
 		if self.pars['Synth']:
-			self.SendMaxmsp(f'/synth', [int(pitch), float(level), float(posx), float(posy)])
+			self.SendSynth(f'/synth', [int(pitch), float(level), float(posx), float(posy)])
+		return
+
+	def SendSynthCycle(self):
+		# self.synthSet = [i for i in range(1,51)]
+		synth = op('synth_set_dat')
+		for i in range(5): 
+			self.synthIndex = ((self.synthIndex + 1) % 50)
+			pitch = int(synth[self.synthIndex+1,'Trackid'].val)
+			# args.append(pitch)
+			level = float(synth[self.synthIndex+1,'Level'].val or 0)
+			# args.append(level)
+			posx = float(synth[self.synthIndex+1,'Positionx'].val or 0)
+			# args.append(posx)
+			posy = float(synth[self.synthIndex+1,'Positiony'].val or 0)
+			# args.append(posy)
+			op.Sound.SendSynthSingle(pitch, level, posx, posy)
+			debug(self.synthIndex+1)
+		# self.SendSynth(f'/synth', args)
+		return
+
+	def SendSynthBundle(self, args):
+		self.SendSynth(f'/synth', args)
+		return
+
+	def SendSynthtoggle(self, trigger = 1, fademillis = 3000):
+		self.SendMaxmsp(f'/synthtoggle', [int(trigger), int(fademillis)])
+		return
+
+	def SendSoundtrack(self, subtype = '0', trigger = 1, fademillis = 3000):
+		if subtype == '0':
+			trigger = 0
+		if trigger == -1:
+			pass
+		else:
+			self.SendAbleton(f'/soundtrack/{subtype}', [int(trigger), int(fademillis)])
 		return
 
 	def SendTrackfail(self, pitch =1):
@@ -135,7 +190,7 @@ class Utils:
 				# RETRIGGER
 				slotid = zaps[tid][0]
 				zaps[tid] = (slotid, tmp[tid][0], tmp[tid][1], tmp[tid][2])
-				debug(f'zap retrigger {zaps[tid]}')
+				# debug(f'zap retrigger {zaps[tid]}')
 				self.SendSoundLocalized(subtype='zap', slot=slotid, trigger=-1, posx=zaps[tid][2], posy=zaps[tid][3])
 			else: 
 				if len(self.zUnassigned) == 0:
@@ -143,7 +198,7 @@ class Utils:
 				# TRIGGER
 				slotid = self.zUnassigned.pop()
 				zaps[tid] = (slotid, tmp[tid][0], tmp[tid][1], tmp[tid][2])
-				debug(f'zap trigger {zaps[tid]}')
+				# debug(f'zap trigger {zaps[tid]}')
 				self.SendSoundLocalized(subtype='zap', slot=slotid, trigger=1, posx=zaps[tid][2], posy=zaps[tid][3])
 		for tid in zaps.keys():
 			if not (tid in tmp.keys()):

@@ -1,4 +1,0 @@
-parameter	value	path	enable
-Question	20	/SystemFailed/poll	1
-Pollmode	leftright	/SystemFailed/poll	1
-Runtime	300	/SystemFailed/poll	1
