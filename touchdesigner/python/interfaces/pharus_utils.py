@@ -17,19 +17,18 @@ class Utils:
 		self.Pharus = op('ordered_pharus_set')
 		self.Unassigned = set(range(1, 1 + self.MaxSlots))
 		self.Assignment = dict()
-		self.AssignmentTable = op('assignment')
+		self.AssignmentTable = op('assign_table')
 
 	"""
 	Update to a given pharus id set without changing existing assigns
 	"""
 	def Update(self, ids):
-		for pid in ids:
-			parent().Assign(pid)
 		tmp = self.Assignment.copy()
 		for aid in tmp:
 			if not aid in ids:
-				self.Unassign(aid) 
-
+				self.Unassign(aid)
+		for pid in ids:
+			parent().Assign(pid)
 
 	"""
 	Clear Assignments and recreate them based on current table
