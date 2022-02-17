@@ -39,25 +39,26 @@ class Assignment:
 		for assigned in performPids:
 			if not assigned in pharusIds:
 				self.TPUnassign(assigned)
-		for pid in pharusIds:
-			if (pid in self.TrackAssigned) or (pid in self.PerformAssigned):
-				pass
-			self.TrackAssign(pid)
+		# for pid in pharusIds:
+			# if (pid in self.TrackAssigned) or (pid in self.PerformAssigned):
+				# pass
+			# self.TrackAssign(pid)
 
 	"""
 	Clear Assignments and recreate them based on current table
 	"""
 	def FullReassign(self):
 		# debug("reassign")
-		self.TrackUnassigned = set(range(self.PerfLimitPar.eval() + 1, self.PerfLimitPar.eval() + self.MaxSlots.eval() + 1))
+		self.TrackUnassigned = set(range(self.PerfLimitPar.eval() + 1, self.PerfLimitPar.eval() + self.TrackLimitPar.eval() + 1))
 		self.TrackAssigned = dict()
-		self.TrackSlotIds = self.TrackAssign.values()
+		self.TrackSlotIds = self.TrackAssigned.values()
 		self.PerformUnassigned = set(range(1,self.PerfLimitPar.eval() + 1))
 		self.PerformAssigned = dict()
-		self.PerformSlotIds = self.TrackAssign.values()
-		for row in self.AssignmentTable.rows():
-			row[0].val = '0'
-		for cell in self.Pharus.col(0):
+		self.PerformSlotIds = self.PerformAssigned.values()
+		self.AssignmentTable.clear(keepSize=True, keepFirstRow=True, keepFirstCol=True)
+		# for row in self.AssignmentTable.rows():
+			# row[1].val = '0'
+		for cell in self.PidTable.col(0):
 			pid = cell.val
 			self.TrackAssign(pid)
 
@@ -89,11 +90,12 @@ class Assignment:
 			self.PerformUnassigned.remove(slot)
 		except KeyError:
 			pass
-		self.PerformAssigned[pid] = slot
-		if pid in self.TrackAssigned:
-			self.TPUnassign(pid)
-		self.AssignmentTable[f'{slot}','Pharusid'].val = pid
-		return slot
+		finally:
+			self.PerformAssigned[pid] = slot
+			if pid in self.TrackAssigned:
+				self.TPUnassign(pid)
+			self.AssignmentTable[f'{slot}','Pharusid'].val = pid
+			return slot
 
 	"""
 	Delete an assignment and make the slot available again
