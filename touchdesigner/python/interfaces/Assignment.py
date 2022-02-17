@@ -39,10 +39,11 @@ class Assignment:
 		for assigned in performPids:
 			if not assigned in pharusIds:
 				self.TPUnassign(assigned)
-		# for pid in pharusIds:
-			# if (pid in self.TrackAssigned) or (pid in self.PerformAssigned):
-				# pass
-			# self.TrackAssign(pid)
+		for pid in pharusIds:
+			if (int(pid.val) in self.TrackAssigned) or (int(pid.val) in self.PerformAssigned):
+				pass
+			else:
+				self.TrackAssign(int(pid.val))
 
 	"""
 	Clear Assignments and recreate them based on current table
@@ -91,10 +92,15 @@ class Assignment:
 		except KeyError:
 			pass
 		finally:
+			oldAssign = self.PerformAssigned.copy()
+			for k in oldAssign:
+				if self.PerformAssigned[k] == slot:
+					self.PerformAssigned.pop(k)
 			self.PerformAssigned[pid] = slot
 			if pid in self.TrackAssigned:
 				self.TPUnassign(pid)
 			self.AssignmentTable[f'{slot}','Pharusid'].val = pid
+			self.PidUpdate(self.PidTable.col(0))
 			return slot
 
 	"""
