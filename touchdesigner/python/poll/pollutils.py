@@ -28,3 +28,4 @@ class Utils:
 		record = self.ownerComp.op(f'record_{qident}')
 		answers = self.Answers.rows()
 		record.Write(answers)
+		record.Save()
