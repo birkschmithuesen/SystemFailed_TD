@@ -21,10 +21,10 @@ def onReplicate(comp, allOps, newOps, template, master):
 		tid = c.digits
 		c.par.Trackid.val = tid
 		c.par.Timestamp.val = absTime.seconds
-		c.outputConnectors[0].connect(pm.inputConnectors[tid])
-		c.outputConnectors[1].connect(rm.inputConnectors[tid])
-		c.outputConnectors[2].connect(lm.inputConnectors[tid])
-		c.outputConnectors[3].connect(nm.inputConnectors[tid])
+		# c.outputConnectors[0].connect(pm.inputConnectors[tid])
+		# c.outputConnectors[1].connect(rm.inputConnectors[tid])
+		# c.outputConnectors[2].connect(lm.inputConnectors[tid])
+		# c.outputConnectors[3].connect(nm.inputConnectors[tid])
 		# c.outputConnectors[4].connect(em.inputConnectors[tid])
 		pass
 	return

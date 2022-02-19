@@ -27,7 +27,7 @@ class Slotutils:
 		self.Neighboursop = ownerComp.op('neighbours')
 
 	def Reset(self):
-		self.ownerComp.par.Performer.val = 0
+		# self.ownerComp.par.Performer.val = 0
 		self.ownerComp.par.Unstrike.pulse()
 		self.Freezeop.par.Unbenchsilent.pulse()
 		self.Freezeop.par.Unfreezesilent.pulse()
