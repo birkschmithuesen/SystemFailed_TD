@@ -19,7 +19,7 @@ class Slotutils:
 		# The component to which this extension is attached
 		self.ownerComp = ownerComp
 		self.pars = ownerComp.par
-		ownerComp.par.Performer.val = 0
+		# ownerComp.par.Performer.val = 0
 		self.Freezeop = ownerComp.op('freeze')
 		self.Freezeop.par.Init.pulse()
 		self.Scoreop = ownerComp.op('score')

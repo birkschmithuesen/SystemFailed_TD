@@ -1,23 +1,23 @@
-# me - this DAT
-# 
-# channel - the Channel object which has changed
-# sampleIndex - the index of the changed sample
-# val - the numeric value of the changed sample
-# prev - the previous sample value
-# 
-# Make sure the corresponding toggle is enabled in the CHOP Execute DAT.
-
 def onOffToOn(channel, sampleIndex, val, prev):
-	tid = parent.track.par.Trackid
-	score = parent.track.par.Score
-	bench = parent.track.par.Benched
+	tid = int(parent.track.par.Trackid.eval())
+	bench = parent.track.par.Benched.eval()
 	if bench:
-		op.Sound.SendBenched('break')
+		op.Sound.SendBenched('break', tid)
+		op('violationgrace').par.start.pulse()
 	else:
-		op.Sound.SendFreeze('break')
+		op.Sound.SendFreeze('break', tid)
+		op('violationgrace').par.start.pulse()
 	return
 
 def whileOn(channel, sampleIndex, val, prev):
+	tid = int(parent.track.par.Trackid.eval())
+	bench = parent.track.par.Benched.eval()
+	if bench:
+		op.Sound.SendBenched('break', tid)
+		op('violationgrace').par.start.pulse()
+	else:
+		op.Sound.SendFreeze('break', tid)
+		op('violationgrace').par.start.pulse()
 	return
 
 def onOnToOff(channel, sampleIndex, val, prev):

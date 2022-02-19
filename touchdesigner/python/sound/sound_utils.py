@@ -65,9 +65,10 @@ class Utils:
 		return
 
 	def SendIntro(self, name):
-		msg = f'/intro/{name.lower()}'
-		args = [int(1)]
-		self.SendAbleton(msg, args)
+		if self.pars.Intro.eval():
+			msg = f'/intro/{name.lower()}'
+			args = [int(1)]
+			self.SendAbleton(msg, args)
 		return
 
 	def SendVoice(self, subtype, arguments):
@@ -77,19 +78,24 @@ class Utils:
 		return
 
 	def SendRound(self, subtype, arguments = [1]):
-		msg = f'/round/{subtype}'
-		args = [int(a) for a in arguments]
-		self.SendAbleton(msg, args)
+		if self.pars.Round.eval():
+			msg = f'/round/{subtype}'
+			args = [int(a) for a in arguments]
+			self.SendAbleton(msg, args)
 		return
 
 	def SendFreeze(self, subtype, trackid):
-		newType = f'freeze/{subtype}'
-		self.SendVoice(newType, [trackid])
+		if self.pars.Freeze.eval():
+			newType = f'freeze/{subtype}'
+			self.SendVoice(newType, [trackid])
+			debug(f"freeze: {newType}, {trackid}")
 		return
 
 	def SendBenched(self, subtype, trackid):
-		newType = f'benched/{subtype}'
-		self.SendVoice(newType, [trackid])
+		if self.pars.Bench.eval():
+			newType = f'benched/{subtype}'
+			self.SendVoice(newType, [trackid])
+			debug(f"bench: {newType}, {trackid}")
 		return
 
 	def SendEvaluationStart(self, trigger = 1):
@@ -118,11 +124,6 @@ class Utils:
 
 	def SendCountdown(self, trigger = 1):
 		self.SendRound('countdown', [int(trigger)])
-		return
-
-	def SendSoundTrigger(self, subtype, trigger = 1):
-		if self.pars['Noises']:
-			self.SendAbleton(f'/sound/{subtype}', [int(trigger)])
 		return
 
 	def SendSoundLocalized(self, subtype, slot = 0, trigger = 1, posx = 0, posy = 0):
@@ -226,10 +227,10 @@ class Utils:
 				strobes[tid] = (slotid, tmp[tid][0], tmp[tid][1], tmp[tid][2])
 				self.SendSoundLocalized(subtype='strobe', slot=slotid, trigger=-1, posx=strobes[tid][2], posy=strobes[tid][3])
 			else: 
-				if len(self.zUnassigned) == 0:
+				if len(self.sUnassigned) == 0:
 					pass
 				# TRIGGER
-				slotid = self.zUnassigned.pop()
+				slotid = self.sUnassigned.pop()
 				strobes[tid] = (slotid, tmp[tid][0], tmp[tid][1], tmp[tid][2])
 				self.SendSoundLocalized(subtype='strobe', slot=slotid, trigger=1, posx=strobes[tid][2], posy=strobes[tid][3])
 		for tid in strobes.keys():
@@ -237,6 +238,6 @@ class Utils:
 				deletes.add(tid)
 		for tid in deletes:
 			# OFF
-			self.SendSoundLocalized(subtype='zap', slot=strobes[tid][0], trigger=0, posx=strobes[tid][2], posy=strobes[tid][3])
-			self.zUnassigned.add(strobes[tid][0])
+			self.SendSoundLocalized(subtype='strobe', slot=strobes[tid][0], trigger=0, posx=strobes[tid][2], posy=strobes[tid][3])
+			self.sUnassigned.add(strobes[tid][0])
 			strobes.pop(tid)
