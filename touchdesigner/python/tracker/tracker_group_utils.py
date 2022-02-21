@@ -29,15 +29,15 @@ class Utils:
 
 	def Reset(self):
 		op('grouptrail').par.reset.pulse()
-		op('speed1').par.reset.pulse()
-		op('speed2').par.reset.pulse()
+		#op('speed1').par.reset.pulse()
+		#op('speed2').par.reset.pulse()
 		return
 
 	def Update(self):
 		op('traillock').lock = 0
-		op('scalar_lock').lock = 0
+		#op('scalar_lock').lock = 0
 		run("op('traillock').lock = 1", delayFrames = 2)
-		run("op('scalar_lock').lock = 1", delayFrames = 2)
+		#run("op('scalar_lock').lock = 1", delayFrames = 2)
 		run("parent.groupprofile.Save()", delayFrames = 3)
 		return
 
