@@ -63,7 +63,12 @@ class Utils:
 			name = table[i,'parameter']
 			value = table[i,'value']
 			path = table[i,'path']
-			op(path).par[name] = value
+			target = op(path).par[name]
+			try:
+				target.val = value.val
+			except AttributeError:
+				debug(f"Error while trying to set parameter via cuetable:\nName: {name}\nPath: {path}\nValue: {value}")
+				pass
 			pass
 
 	def GoScene(self):

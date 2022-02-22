@@ -8,9 +8,9 @@ class Utils:
 	def __init__(self, ownerComp):
 		# The component to which this extension is attached
 		self.ownerComp = ownerComp
-		self.Intro = op('intro')
-		self.Round = op('round')
-		self.Outro = op('outro')
+		self.Intro = ownerComp.op('./intro')
+		self.Round = ownerComp.op('./round')
+		self.Outro = ownerComp.op('./outro')
 
 	def Pause(self):
 		op.Control.par.Timestop = 1
@@ -22,6 +22,7 @@ class Utils:
 		self.Round.par.initialize.pulse()
 		self.Outro.par.initialize.pulse()
 		self.Intro.par.initialize.pulse()
+		return
 		
 	def GoIntro(self):
 		self.ReInit()
