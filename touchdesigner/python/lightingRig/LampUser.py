@@ -1,8 +1,10 @@
 class LampUser(list):
 	counter = 0
+	lampManager = op.lampManager
 
 	def __init__(self):
 		self.priority = 0
+		self.lampManager = LampUser.lampManager	## redundant?
 		self.cntId = LampUser.counter
 		LampUser.counter += 1
 

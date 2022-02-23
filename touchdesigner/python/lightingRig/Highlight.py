@@ -11,7 +11,7 @@ class Highlight(LampUser):
 		self.cueId = cueId
 		self.initFromCueTable()
 		self.intensity = 0
-		self.intensityChannel = (cueId-1)*27+25
+		self.intensityChannel = (cueId-1)*27+26
 		# TODO init from DMX
 		self.zoom = 0 # aka beamSize
 		self.trackerPosition = (0,0,0)
@@ -82,7 +82,7 @@ class Highlight(LampUser):
 		self.priority = int(Highlight.cueTable[str(self.cueId), 'Priority'].val)		
 
 	def acquireLamps(self):
-		lamps = op.lampManager.RequestLamps(self, self.maxSize)
+		lamps = self.lampManager.RequestLamps(self, self.maxSize)
 		return
 
 	def setLampAttributes(self, lamp):

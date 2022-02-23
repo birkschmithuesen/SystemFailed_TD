@@ -21,7 +21,7 @@ class LampReservationExt(LampUser):
 		self.ownerComp = ownerComp
 		super().__init__()
 		self.priority = 99
-		self.startChannel = 400
+		self.startChannel = 401
 		for i in range(16):
 			LampReservationExt.dmxManager.subscribeChannel(self.startChannel+i, self.setDmx)
 

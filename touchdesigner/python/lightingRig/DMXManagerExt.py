@@ -13,6 +13,9 @@ from inspect import signature
 class DMXManagerExt(list):
 	"""
 	DMXManagerExt description
+
+	only here, the list is zero-based.
+	outside of this file dmx-channels can be treated as one-based
 	"""
 	def __init__(self, ownerComp):
 		# The component to which this extension is attached
@@ -27,26 +30,33 @@ class DMXManagerExt(list):
 
 	def updateDmxChannel(self, channel, value):
 		#debug(channel, value)
-		self[channel]['value'] = value
-		for callback in self[channel]['callbacks']:
-			self.executeCallback(channel, callback)
+		index = channel - 1
+		self[index]['value'] = value
+		for callback in self[index]['callbacks']:
+			self.executeCallback(index, callback)
 
 	def subscribeChannel(self, channel, callback, sixteenBit=False):
 		#debug(callback)
-		self[channel]['callbacks'].append(callback)
-		self.executeCallback(channel, callback)
+		index = channel - 1
+		self[index]['callbacks'].append(index)
+		self.executeCallback(index, callback)
 
 	def unsubscribeChannel(self, channel, callback):
-		if callback in self[channel]['callbacks']:
-			self[channel]['callbacks'].remove(callback)
+		index = channel - 1
+		if callback in self[index]['callbacks']:
+			self[index]['callbacks'].remove(callback)
 		#debug(self[channel])
 
-	def executeCallback(self, channel, callback):
-		value = self[channel]['value']
-		if len(signature(callback).parameters) == 1:
-			callback(value)
+	def executeCallback(self, index, callback):
+		value = self[index]['value']
+		if callable(callback):
+			if len(signature(callback).parameters) == 1:
+				callback(value)
+			else:
+				channel = index + 1
+				callback(channel, value)
 		else:
-			callback(channel, value)
+			setattr(callback['object'], callback['name'], int(value))
 
 	def Reset(self):
 		self.clear()
