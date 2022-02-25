@@ -26,7 +26,7 @@ class LampReservationExt(LampUser):
 			LampReservationExt.dmxManager.subscribeChannel(self.startChannel+i, self.setDmx)
 
 	def setDmx(self, channel, value):
-		debug(channel, value)
+		#debug(channel, value)
 		lampId = channel - self.startChannel
 		if value == 0:
 			op.lampManager.RequestLampById(self, lampId)

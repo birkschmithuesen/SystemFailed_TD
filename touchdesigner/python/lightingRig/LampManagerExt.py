@@ -1,4 +1,5 @@
 from lamp import Lamp
+import random
 
 class LampManagerExt(dict):
 	"""
@@ -27,29 +28,32 @@ class LampManagerExt(dict):
 				lamp.owner.releaseLamp(lampId)
 			requester.append(lamp)
 
-	def RequestLamps(self, requester, amount):
+	def RequestLamps(self, requester, amount, options = (0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15), mode = 'equal'):
 		# 1. look for idle Lamps
 		# 2. look for lamps with lower prio
 		# 3. look for lamps with same prio (but automatically older)
 		# and return them (and mark theam in a way)
 		# if there are still lamps missing, add to queue (and eventually process the queue)
 		for priority in (0, requester.priority, requester.priority + 1):
-			print('priority', priority)
+			#print('priority', priority)
 			missingAmount = amount - len(requester)
 			for i in range(missingAmount):
-				j0 = (i*math.floor(16/amount))%16
+				if mode == 'equal':
+					j0 = (i*math.floor(len(options)/amount))%len(options)
+				else:
+					j0 = random.randint(0, len(options))
 				lamp = None
 				j = j0
-				while not lamp and j < (j0+16):
-					print('tesId', j%16)
-					candidate = self[j%16]
+				while not lamp and j < (j0+len(options)):
+					#print('tesId', j%16)
+					candidate = self[options[j%len(options)]]
 					if not candidate.owner or (candidate.owner != requester) and priority > candidate.owner.priority:
 						lamp = candidate
 						if lamp.owner:
 							# should we add this requester to a requestcue to give him back a lamp asap?
 							lamp.owner.releaseLamp(lamp.lampId)
 						requester.append(lamp)
-						debug(f"appended lamp {lamp}")
+						#debug(f"appended lamp {lamp}")
 					j += 1
 		if len(requester) < amount:
 			# should we add this requester to a requestcue to give him back a lamp asap?

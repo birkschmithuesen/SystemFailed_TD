@@ -8,6 +8,9 @@ class LampUser(list):
 		self.cntId = LampUser.counter
 		LampUser.counter += 1
 
+	def __bool__(self):
+		return True
+
 	def append(self, lamp):
 		lamp.owner = self
 		super().append(lamp)

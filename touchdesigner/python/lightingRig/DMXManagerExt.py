@@ -25,7 +25,7 @@ class DMXManagerExt(list):
 	def initFromDmx(self):
 		for i in range(512):
 			value = op('dmxin1')[f'c{i+1}']
-			print(i, value)
+			#print(i, value)
 			self.append({'value':value, 'callbacks':[]})
 
 	def updateDmxChannel(self, channel, value):
@@ -38,7 +38,7 @@ class DMXManagerExt(list):
 	def subscribeChannel(self, channel, callback, sixteenBit=False):
 		#debug(callback)
 		index = channel - 1
-		self[index]['callbacks'].append(index)
+		self[index]['callbacks'].append(callback)
 		self.executeCallback(index, callback)
 
 	def unsubscribeChannel(self, channel, callback):

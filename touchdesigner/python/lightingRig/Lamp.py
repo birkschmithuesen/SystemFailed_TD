@@ -28,11 +28,14 @@
 
 	@intensity.setter
 	def intensity(self, value):
+		#debug(value)
 		value = float(value)
 		if value > 1.0:
 			value = 1.0
 		self._intensity = value
-		if self.activationId:
+		if self.activationId == 1:
+			Lamp.magicQ.SetActivationViaArtnet(self.activationId, self.intensity, self.lampId)
+		elif self.activationId:
 			Lamp.magicQ.SetActivation(self.activationId, self.intensity, self.lampId)
 
 	@property

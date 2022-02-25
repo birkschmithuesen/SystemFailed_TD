@@ -17,6 +17,7 @@ class MQInterfaceExt:
 		self.ownerComp = ownerComp
 		self.oscSender = op('oscout_mq')
 		self.mqSender = op('tracker_sender')
+		self.dmxOut = op('dmxout_chans')
 		self.oscThrottelCounter = 0
 		self.executeDict = {
 			'activation': {'page': 13},
@@ -33,6 +34,13 @@ class MQInterfaceExt:
 		oscMessage = f"/exec/{self.executeDict['activation']['page']}/{activationId + lampId}"
 		if self.verbose > 0: debug(oscMessage, intensity)
 		self.oscSender.sendOSC(oscMessage, [intensity], useNonStandardTypes=True)
+
+	def SetActivationViaArtnet(self, activationId, intensity, lampId):
+		if self.verbose > 1: debug(activationId, intensity, lampId)
+		if activationId == 1:
+			index = activationId + lampId
+			value = 255 * intensity
+		self.dmxOut.par[f'value{index}'] = value
 
 	def ChooseSoftPalette(self, attributeName, attributeId, lampId):
 		if self.verbose > 1: debug(attributeName, attributeId, lampId)
