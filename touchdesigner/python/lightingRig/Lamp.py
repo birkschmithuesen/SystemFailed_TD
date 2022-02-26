@@ -11,6 +11,7 @@
 		self.trackerPosition = (0,0,0)
 		self.zoom = 0
 		self.owner = None
+		self.dist = 0
 		
 	####### PROPERTIES
 
@@ -33,7 +34,7 @@
 		if value > 1.0:
 			value = 1.0
 		self._intensity = value
-		if self.activationId == 1:
+		if self.activationId == 66:
 			Lamp.magicQ.SetActivationViaArtnet(self.activationId, self.intensity, self.lampId)
 		elif self.activationId:
 			Lamp.magicQ.SetActivation(self.activationId, self.intensity, self.lampId)
@@ -44,6 +45,8 @@
 
 	@zoom.setter
 	def zoom(self, value):
+		if isinstance(value, int):
+			value = value/255
 		if hasattr(self, '_zoom') and value == self.zoom: 
 			return
 		value = float(value)
@@ -125,10 +128,12 @@
 		a = self.trackerPosition
 		b = self.position
 		dist = 100 * math.sqrt((a[0]-b[0])**2 + (a[1]-b[1])**2 + (a[2]-b[2])**2)
+		self.dist = dist
 		if dist == 0 or self.beamSize == 0:
 			return
 
-		self.zoom = self.dmxValue(self.beamSize, dist)/255
+		self.zoom = self.dmxValue(self.beamSize*200, dist)/255
+		#debug(self.zoom)
 
 	def dmxValue(self, size, distance):
 		# size in cm
@@ -143,7 +148,7 @@
 
 
 	def __repr__(self):
-		return f"lamp#{self.lampId} owned by {self.owner}"
+		return f"lamp#{self.lampId} bz={self.beamSize:.1f} d={self.dist:.1f} z={self.zoom:.2f} owned by {self.owner}"
 
 	def release(self):
 		self.owner = None

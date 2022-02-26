@@ -12,10 +12,12 @@ class Highlight(LampUser):
 		self.initFromCueTable()
 		self.intensity = 0
 		self.intensityChannel = (cueId-1)*27+26
+		self.zoomChannel = (cueId-1)*27+23
 		# TODO init from DMX
 		self.zoom = 0 # aka beamSize
 		self.trackerPosition = (0,0,0)
 		Highlight.dmxManager.subscribeChannel(self.intensityChannel, self.setIntensityFromDmx)
+		Highlight.dmxManager.subscribeChannel(self.zoomChannel, {'object':self,'name':'zoom'})
 
 	def __repr__(self):
 		return f"highlight#{self.cntId} for {self.trackId} / cue {self.cueId} with lamps {[lamp.lampId for lamp in self]} @ {float(self.intensity):.2f}/{float(self.zoom):.2f}"
@@ -56,9 +58,11 @@ class Highlight(LampUser):
 
 	@zoom.setter
 	def zoom(self, value):
+		if isinstance(value, int):
+			value = value/255
 		self._zoom = value
 		for lamp in self:
-			lamp.zoom = value
+			lamp.beamSize = value
 
 
 	########### "PUBLIC" METHODS

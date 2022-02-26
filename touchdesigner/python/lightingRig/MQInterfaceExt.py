@@ -26,7 +26,7 @@ class MQInterfaceExt:
 			'shutter': {'page': 12},
 			'zoom': {'page': 15}
 		}
-		self.verbose = 0 # 0:quiet, 1: oscMessages, 2: +incoming values, 3: +tracker-messages
+		self.verbose = 1 # 0:quiet, 1: oscMessages, 2: +incoming values, 3: +tracker-messages
 		self.tracker = {gid: {'tid': 0, 'position': (0,0,0)} for gid in range(16)}
 
 	def SetActivation(self, activationId, intensity, lampId):
@@ -49,6 +49,14 @@ class MQInterfaceExt:
 		self.oscSender.sendOSC(oscMessage, [int(100)], useNonStandardTypes=True)
 
 	def SetZoom(self, lampId, value):
+		if self.verbose > 1: debug(lampId, value)
+		# TODO move this to artnet and use the measured zoom-values
+		#if we send 1.0 the value in MQ is going to 0
+		index = lampId
+		value = 255 * value
+		self.dmxOut.par[f'value{index}'] = value
+
+	def SetZoomViaOSC(self, lampId, value):
 		if self.verbose > 1: debug(lampId, value)
 		# TODO move this to artnet and use the measured zoom-values
 		oscMessage = f"/exec/{self.executeDict['zoom']['page']}/{lampId+1}"
