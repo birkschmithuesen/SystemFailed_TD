@@ -1,5 +1,7 @@
 ﻿class Lamp:
 	magicQ = op.magicQ
+	maxSize = 400 	# how big can the spot be in cm max (for calculation of zoom dependent of distance and size)
+	maxHeight = 6.0 
 
 	def __init__(self, lampId, position):
 		self.lampId = lampId
@@ -9,6 +11,7 @@
 		self.beamSize = 0
 		self.position = position
 		self.trackerPosition = (0,0,0)
+		self.height = 0
 		self.zoom = 0
 		self.owner = None
 		self.dist = 0
@@ -22,6 +25,18 @@
 	@owner.setter
 	def owner(self, value):
 		self._owner = value
+
+	# should come in 0...1.0
+	@property
+	def height(self):
+		if not hasattr(self, '_height'):
+			self._height = 0
+		return self._height	
+
+	@height.setter
+	def height(self, value):
+		self._height = value * Lamp.maxHeight
+		self.setMQTracker()
 
 	@property
 	def intensity(self):
@@ -53,7 +68,7 @@
 		if value > 1.0:
 			value = 1.0
 		self._zoom = value
-		if self.intensity > 0:
+		if self.intensity > 0 or value == 0:
 			Lamp.magicQ.SetZoom(self.lampId, value)
 
 	@property
@@ -74,7 +89,8 @@
 	
 	@trackerPosition.setter
 	def trackerPosition(self, value):
-		self._trackerPosition = value
+		#self._trackerPosition = value
+		self._trackerPosition = (value[0], value[1], self.height)
 		if self.beamSize > 0:
 			self.calculateZoomFromBeamSize()
 		self.setMQTracker()
@@ -132,7 +148,7 @@
 		if dist == 0 or self.beamSize == 0:
 			return
 
-		self.zoom = self.dmxValue(self.beamSize*200, dist)/255
+		self.zoom = self.dmxValue(self.beamSize*Lamp.maxSize, dist)/255
 		#debug(self.zoom)
 
 	def dmxValue(self, size, distance):
@@ -140,7 +156,7 @@
 		# distance in cm
 		size1cm = size/distance
 		out = 216.73*size1cm**2 - 710.8*size1cm + 305.84
-		if out < 0: out = 0
+		if out <= 3: out = 3
 		if out > 255: out = 255
 		return out
 
@@ -148,11 +164,12 @@
 
 
 	def __repr__(self):
-		return f"lamp#{self.lampId} bz={self.beamSize:.1f} d={self.dist:.1f} z={self.zoom:.2f} owned by {self.owner}"
+		return f"lamp#{self.lampId} bz={self.beamSize:.1f} d={self.dist:.1f} z={self.zoom:.2f} h={self.height:.2f} owned by {self.owner}"
 
 	def release(self):
 		self.owner = None
 		self.intensity = 0
+		self.zoom = 0
 
 	def setControllableFromDmx(self, value):
 		self.controllable = value

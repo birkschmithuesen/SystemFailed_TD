@@ -53,8 +53,8 @@ class MQInterfaceExt:
 		# TODO move this to artnet and use the measured zoom-values
 		#if we send 1.0 the value in MQ is going to 0
 		index = lampId
-		value = 255 * value
-		self.dmxOut.par[f'value{index}'] = value
+		dmx = 255 * value
+		self.dmxOut.par[f'value{index}'] = dmx
 
 	def SetZoomViaOSC(self, lampId, value):
 		if self.verbose > 1: debug(lampId, value)
