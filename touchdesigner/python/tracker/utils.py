@@ -91,4 +91,4 @@ class Utils:
 		self.PassPulse('Stoprecord')
 		self.PassPulse('Updatetrail')
 		self.PassPulse('Unfreezesilent')
-		# self.PassPulse('Unstrike')
+		self.PassPulse('Unstrike')
