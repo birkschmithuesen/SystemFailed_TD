@@ -14,13 +14,25 @@ class Highlight(LampUser):
 		self.intensityChannel = (cueId-1)*27+26
 		self.zoomChannel = (cueId-1)*27+23
 		self.tiltChannel = (cueId-1)*27+3
+		self.redChannel = (cueId-1)*27+10
+		self.greenChannel = (cueId-1)*27+12
+		self.blueChannel = (cueId-1)*27+14
+		self.whiteChannel = (cueId-1)*27+16
 		# TODO init from DMX
 		self.zoom = 0 # aka beamSize
 		self.trackerPosition = (0,0,0)
 		self.height = 0
+		self.red = 0
+		self.green = 0
+		self.blue = 0
+		self.white = 0
 		Highlight.dmxManager.subscribeChannel(self.intensityChannel, self.setIntensityFromDmx)
 		Highlight.dmxManager.subscribeChannel(self.zoomChannel, {'object':self,'name':'zoom'})
 		Highlight.dmxManager.subscribeChannel(self.tiltChannel, {'object':self,'name':'height'})
+		Highlight.dmxManager.subscribeChannel(self.redChannel, {'object':self,'name':'red'})
+		Highlight.dmxManager.subscribeChannel(self.greenChannel, {'object':self,'name':'green'})
+		Highlight.dmxManager.subscribeChannel(self.blueChannel, {'object':self,'name':'blue'})
+		Highlight.dmxManager.subscribeChannel(self.whiteChannel, {'object':self,'name':'white'})
 
 	def __repr__(self):
 		return f"highlight#{self.cntId} for {self.trackId} / cue {self.cueId} with lamps {[lamp.lampId for lamp in self]} @ {float(self.intensity):.2f}/{float(self.zoom):.2f}"
@@ -66,6 +78,54 @@ class Highlight(LampUser):
 		self._zoom = value
 		for lamp in self:
 			lamp.beamSize = value
+
+	@property
+	def red(self):
+		return self._red
+
+	@red.setter
+	def red(self, value):
+		if isinstance(value, int):
+			value = value/255
+		self._red = value
+		for lamp in self:
+			lamp.red = value
+
+	@property
+	def green(self):
+		return self._green
+
+	@green.setter
+	def green(self, value):
+		if isinstance(value, int):
+			value = value/255
+		self._green = value
+		for lamp in self:
+			lamp.green = value
+
+	@property
+	def blue(self):
+		return self._blue
+
+	@blue.setter
+	def blue(self, value):
+		if isinstance(value, int):
+			value = value/255
+		self._blue = value
+		for lamp in self:
+			lamp.blue = value
+
+	@property
+	def white(self):
+		return self._white
+
+	@white.setter
+	def white(self, value):
+		if isinstance(value, int):
+			value = value/255
+		self._white = value
+		for lamp in self:
+			lamp.white = value
 
 	@property
 	def height(self):

@@ -45,6 +45,8 @@
 	@intensity.setter
 	def intensity(self, value):
 		#debug(value)
+		prev = -1 if not hasattr(self, '_intensity') else self._intensity
+		if value == prev: return
 		value = float(value)
 		if value > 1.0:
 			value = 1.0
@@ -53,6 +55,9 @@
 			Lamp.magicQ.SetActivationViaArtnet(self.activationId, self.intensity, self.lampId)
 		elif self.activationId:
 			Lamp.magicQ.SetActivation(self.activationId, self.intensity, self.lampId)
+			# to release the color fader
+			if value == 0: Lamp.magicQ.SetColor(self.lampId, (0,0,0,0))
+
 
 	@property
 	def zoom(self):
@@ -70,6 +75,70 @@
 		self._zoom = value
 		if self.intensity > 0 or value == 0:
 			Lamp.magicQ.SetZoom(self.lampId, value)
+
+	@property
+	def red(self):
+		if not hasattr(self, '_red'):
+			self._red = 0
+		return self._red
+
+	@red.setter
+	def red(self, value):
+		if isinstance(value, int):
+			value = value/255
+		value = min(float(value), 1.0)
+		value = max(5/255, value)
+		self._red = value
+		if self.intensity > 0 or value == 0:
+			Lamp.magicQ.SetColor(self.lampId, (self.red, self.green, self.blue, self.white))
+
+	@property
+	def green(self):
+		if not hasattr(self, '_green'):
+			self._green = 0
+		return self._green
+
+	@green.setter
+	def green(self, value):
+		if isinstance(value, int):
+			value = value/255
+		value = min(float(value), 1.0)
+		value = max(5/255, value)
+		self._green = value
+		if self.intensity > 0 or value == 0:
+			Lamp.magicQ.SetColor(self.lampId, (self.red, self.green, self.blue, self.white))
+
+	@property
+	def blue(self):
+		if not hasattr(self, '_blue'):
+			self._blue = 0
+		return self._blue
+
+	@blue.setter
+	def blue(self, value):
+		if isinstance(value, int):
+			value = value/255
+		value = min(float(value), 1.0)
+		value = max(5/255, value)
+		self._blue = value
+		if self.intensity > 0 or value == 0:
+			Lamp.magicQ.SetColor(self.lampId, (self.red, self.green, self.blue, self.white))
+
+	@property
+	def white(self):
+		if not hasattr(self, '_white'):
+			self._white = 0
+		return self._white
+
+	@white.setter
+	def white(self, value):
+		if isinstance(value, int):
+			value = value/255
+		value = min(float(value), 1.0)
+		value = max(5/255, value)
+		self._white = value
+		if self.intensity > 0 or value == 0:
+			Lamp.magicQ.SetColor(self.lampId, (self.red, self.green, self.blue, self.white))
 
 	@property
 	def activationId(self):
@@ -112,7 +181,7 @@
 	@color.setter
 	def color(self, value):
 		self._colorId = value
-		Lamp.magicQ.ChooseSoftPalette('color', int(value), self.lampId)
+		# Lamp.magicQ.ChooseSoftPalette('color', int(value), self.lampId)
 
 	@property
 	def shutter(self):

@@ -56,6 +56,18 @@ class MQInterfaceExt:
 		dmx = 255 * value
 		self.dmxOut.par[f'value{index}'] = dmx
 
+	def SetColor(self, lampId, color):
+		if self.verbose > 1: debug(lampId, color)
+		index = lampId
+		dmxRed = 255 * color[0]
+		dmxGreen = 255 * color[1]
+		dmxBlue = 255 * color[2]
+		dmxWhite = 255 * color[3]
+		self.dmxOut.par[f'value{16+index}'] = dmxRed
+		self.dmxOut.par[f'value{32+index}'] = dmxGreen
+		self.dmxOut.par[f'value{48+index}'] = dmxBlue
+		self.dmxOut.par[f'value{64+index}'] = dmxWhite
+
 	def SetZoomViaOSC(self, lampId, value):
 		if self.verbose > 1: debug(lampId, value)
 		# TODO move this to artnet and use the measured zoom-values
