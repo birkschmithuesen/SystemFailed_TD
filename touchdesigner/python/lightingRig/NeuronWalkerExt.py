@@ -51,6 +51,13 @@ class NeuronStep(LampUser):
 
 	def setLampAttributes(self, lamp):
 		lamp.activationId = 1
+		lamp.height = -1	# to NOT use height in the trackerPosition
+		lamp.red = 1
+		lamp.green = 1
+		lamp.blue = 1
+		lamp.white = 1
+		lamp.beamSize = 0
+		lamp.shutter = 61
 		
 	def trigger(self):
 		#debug('trigger',self, f'{me.time.seconds:.2f}')
@@ -169,6 +176,8 @@ class NeuronWalkerExt(list):
 		# TODO: if prev == 0 start new step
 		if prev == 0 and value > 0:
 			self.newNeuronWalk(-1)
+		if value == 0:
+			self.StopAllWalks()
 
 	def newNeuronWalk(self, lampId):
 		step = NeuronStep(self, lampId)
@@ -178,7 +187,11 @@ class NeuronWalkerExt(list):
 	def StopAllWalks(self):
 		debug(self)
 		for walk in self:
-			try:
-				walk.delete()
-			except:
-				pass
+			if walk: walk.delete()
+		debug(self)
+		# return
+		# 	try:
+		# 		walk.delete()
+		# 	except:
+		# 		debug("failed delete")
+		# 		pass

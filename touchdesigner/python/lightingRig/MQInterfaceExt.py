@@ -26,7 +26,7 @@ class MQInterfaceExt:
 			'shutter': {'page': 12},
 			'zoom': {'page': 15}
 		}
-		self.verbose = 1 # 0:quiet, 1: oscMessages, 2: +incoming values, 3: +tracker-messages
+		self.verbose = 0 # 0:quiet, 1: oscMessages, 2: +incoming values, 3: +tracker-messages
 		self.tracker = {gid: {'tid': 0, 'position': (0,0,0)} for gid in range(16)}
 
 	def SetActivation(self, activationId, intensity, lampId):
@@ -57,7 +57,7 @@ class MQInterfaceExt:
 		self.dmxOut.par[f'value{index}'] = dmx
 
 	def SetColor(self, lampId, color):
-		if self.verbose > 1: debug(lampId, color)
+		if self.verbose > 0: debug(lampId, color)
 		index = lampId
 		dmxRed = 255 * color[0]
 		dmxGreen = 255 * color[1]

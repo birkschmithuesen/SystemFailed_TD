@@ -11,7 +11,7 @@
 		self.beamSize = 0
 		self.position = position
 		self.trackerPosition = (0,0,0)
-		self.height = 0
+		self.height = -1
 		self.zoom = 0
 		self.owner = None
 		self.dist = 0
@@ -158,8 +158,13 @@
 	
 	@trackerPosition.setter
 	def trackerPosition(self, value):
-		#self._trackerPosition = value
 		self._trackerPosition = (value[0], value[1], self.height)
+
+		#self._trackerPosition = value
+		# if self.height:
+		# 	self._trackerPosition = (value[0], value[1], value[2])
+		# else:
+		# 	self._trackerPosition = (value[0], value[1], self.height)
 		if self.beamSize > 0:
 			self.calculateZoomFromBeamSize()
 		self.setMQTracker()
