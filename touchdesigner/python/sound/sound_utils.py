@@ -21,6 +21,8 @@ class Utils:
 		synth2 = op('sender_synth_debug')
 		zap1 = op('sender_zap')
 		zap2 = op('sender_zap_debug')
+		magicq1 = op('sender_magicq')
+		magicq2 = op('sender_magicq_debug')
 
 		self.synthSet = [i for i in range(1,51)]
 		self.synthIndex = 0
@@ -29,8 +31,9 @@ class Utils:
 		self.abletonSenders = [ableton1, ableton2]
 		self.synthSenders = [synth1, synth2]
 		self.zapSenders = [zap1, zap2]
+		self.magicqSenders = [magicq1, magicq2]
 		self.zaps = dict()
-		self.zUnassigned = set(range(10))
+		self.zUnassigned = set(range(7))
 		self.strobes = dict()
 		self.sUnassigned = set(range(4))
 
@@ -48,6 +51,12 @@ class Utils:
 
 	def SendAbleton(self, message, args):
 		for s in self.abletonSenders:
+			# debug(f'{self.ownerComp} sending osc on {s}:\n {message}, {args}')
+			s.sendOSC(message, args, asBundle=False, useNonStandardTypes=True)
+		return
+
+	def SendMagicq(self, message, args):
+		for s in self.magicqSenders:
 			# debug(f'{self.ownerComp} sending osc on {s}:\n {message}, {args}')
 			s.sendOSC(message, args, asBundle=False, useNonStandardTypes=True)
 		return
@@ -82,6 +91,7 @@ class Utils:
 			msg = f'/round/{subtype}'
 			args = [int(a) for a in arguments]
 			self.SendAbleton(msg, args)
+			self.SendMagicq(msg, args)
 		return
 
 	def SendFreeze(self, subtype, trackid):
@@ -185,6 +195,9 @@ class Utils:
 				tx = track[1]
 				ty = track[2]
 				tmp[tid] = (tid,tx,ty)
+		else:
+			for offid in range(7):
+				self.SendSoundLocalized(subtype='zap', slot=offid, trigger=0, posx=0, posy=0)
 		for tid in tmp.keys():
 			# vals = tmp[tid]
 			if tid in zaps.keys():
@@ -208,7 +221,11 @@ class Utils:
 			# OFF
 			self.SendSoundLocalized(subtype='zap', slot=zaps[tid][0], trigger=0, posx=zaps[tid][2], posy=zaps[tid][3])
 			self.zUnassigned.add(zaps[tid][0])
-			zaps.pop(tid)
+			try:
+				zaps.pop(tid)
+			except KeyError:
+				pass
+
 
 	def SendStrobes(self, tracks):
 		tmp = dict()

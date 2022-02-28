@@ -10,6 +10,16 @@ class Utils:
 		self.pars = ownerComp.par
 		self.Loaded = ownerComp.op('./loaded_cue')
 		self.Sceneloader = op.Scene
+		self.JokerState = 0
+
+	def JokerButton(self):
+		if self.JokerState == 0:
+			self.JokerState = 1
+			ctable = op('cuetable')
+			visfreeze = op.Outputfreeze
+			visfreeze.par.Value0 = 1
+			jokercue = ctable['joker','name'].row
+			self.GoTo(jokercue)
 
 	def Pause(self):
 		self.pars.Timestop.val = 1
@@ -132,6 +142,8 @@ class Utils:
 			op.Sound.SendIntro(soundIntro)
 		if not soundEval == '':
 			op.Sound.SendEvaluationStart()
+		if soundRound != 'joker':
+			op.Sound.SendRound('joker', [0])
 		if not soundRound == '':
 			op.Sound.SendRound(soundRound)
 		

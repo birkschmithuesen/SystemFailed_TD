@@ -18,12 +18,11 @@ def onFrameStart(frame):
 	zapchop = op('zaps')
 	zaps = []
 	numZ = zapchop.numSamples
-	if numZ > 1:
-		for k in range(numZ):
-			tid = int(zapchop['Trackid'][k])
-			tx = zapchop['Positionx'][k]
-			ty = zapchop['Positiony'][k]
-			zaps.append([tid, tx, ty])
+	for k in range(numZ):
+		tid = int(zapchop['Trackid'][k])
+		tx = zapchop['Positionx'][k]
+		ty = zapchop['Positiony'][k]
+		zaps.append([tid, tx, ty])
 	parent.Sound.SendZaps(zaps)
 	return
 
