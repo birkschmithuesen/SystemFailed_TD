@@ -58,7 +58,7 @@ class Utils:
 	def SendMagicq(self, message, args):
 		for s in self.magicqSenders:
 			# debug(f'{self.ownerComp} sending osc on {s}:\n {message}, {args}')
-			s.sendOSC(message, args, asBundle=False, useNonStandardTypes=True)
+			s.sendOSC(message[0:15], args, asBundle=False, useNonStandardTypes=True)
 		return
 
 	def SendSynth(self, message, args):
