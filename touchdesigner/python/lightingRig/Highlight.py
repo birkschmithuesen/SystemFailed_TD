@@ -35,7 +35,8 @@ class Highlight(LampUser):
 		Highlight.dmxManager.subscribeChannel(self.whiteChannel, {'object':self,'name':'white'})
 
 	def __repr__(self):
-		return f"highlight#{self.cntId} for {self.trackId} / cue {self.cueId} with lamps {[lamp.lampId for lamp in self]} @ {float(self.intensity):.2f}/{float(self.zoom):.2f}"
+		#return f"highlight#{self.cntId} for {self.trackId} / cue {self.cueId} / col({self.red:.1f}, {self.green:.1f}, {self.blue:.1f}, {self.white:.1f}) with lamps {[lamp.lampId for lamp in self]} @ {float(self.intensity):.2f}/{float(self.zoom):.2f}"
+		return f"highlight#{self.cntId} for {self.trackId} / cue {self.cueId} / with lamps {[lamp.lampId for lamp in self]} @ {float(self.intensity):.2f}/{float(self.zoom):.2f}"
 
 	########## PROPERTIES
 
@@ -165,12 +166,18 @@ class Highlight(LampUser):
 		return
 
 	def setLampAttributes(self, lamp):
+		debug("setting")
 		lamp.color = self.color
 		lamp.beam = self.beam
 		lamp.shutter = self.shutter
 		lamp.activationId = self.activationId
 		lamp.intensity = self.intensity
 		lamp.trackerPosition = self.trackerPosition
+		lamp.red = self.red
+		lamp.green = self.green
+		lamp.blue = self.blue
+		lamp.white = self.white
+
 
 	def setIntensityFromDmx(self, value):
 		self.intensity = value/255

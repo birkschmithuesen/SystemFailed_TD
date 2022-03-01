@@ -55,6 +55,7 @@
 			Lamp.magicQ.SetActivationViaArtnet(self.activationId, self.intensity, self.lampId)
 		elif self.activationId:
 			Lamp.magicQ.SetActivation(self.activationId, self.intensity, self.lampId)
+			Lamp.magicQ.SetColor(self.lampId, (self.red, self.green, self.blue, self.white))
 			# to release the color fader
 			if value == 0: Lamp.magicQ.SetColor(self.lampId, (0,0,0,0))
 
@@ -89,8 +90,8 @@
 		value = min(float(value), 1.0)
 		value = max(5/255, value)
 		self._red = value
-		if self.intensity > 0 or value == 0:
-			Lamp.magicQ.SetColor(self.lampId, (self.red, self.green, self.blue, self.white))
+		#if self.intensity > 0 or value == 0:
+		Lamp.magicQ.SetColor(self.lampId, (self.red, self.green, self.blue, self.white))
 
 	@property
 	def green(self):
@@ -105,8 +106,8 @@
 		value = min(float(value), 1.0)
 		value = max(5/255, value)
 		self._green = value
-		if self.intensity > 0 or value == 0:
-			Lamp.magicQ.SetColor(self.lampId, (self.red, self.green, self.blue, self.white))
+		#if self.intensity > 0 or value == 0:
+		Lamp.magicQ.SetColor(self.lampId, (self.red, self.green, self.blue, self.white))
 
 	@property
 	def blue(self):
@@ -121,8 +122,8 @@
 		value = min(float(value), 1.0)
 		value = max(5/255, value)
 		self._blue = value
-		if self.intensity > 0 or value == 0:
-			Lamp.magicQ.SetColor(self.lampId, (self.red, self.green, self.blue, self.white))
+		#if self.intensity > 0 or value == 0:
+		Lamp.magicQ.SetColor(self.lampId, (self.red, self.green, self.blue, self.white))
 
 	@property
 	def white(self):
@@ -137,8 +138,8 @@
 		value = min(float(value), 1.0)
 		value = max(5/255, value)
 		self._white = value
-		if self.intensity > 0 or value == 0:
-			Lamp.magicQ.SetColor(self.lampId, (self.red, self.green, self.blue, self.white))
+		#if self.intensity > 0 or value == 0:
+		Lamp.magicQ.SetColor(self.lampId, (self.red, self.green, self.blue, self.white))
 
 	@property
 	def activationId(self):
@@ -238,7 +239,7 @@
 
 
 	def __repr__(self):
-		return f"lamp#{self.lampId} bz={self.beamSize:.1f} d={self.dist:.1f} z={self.zoom:.2f} h={self.height:.2f} owned by {self.owner}"
+		return f"lamp#{self.lampId} bz={self.beamSize:.1f} d={self.dist:.1f} z={self.zoom:.2f} h={self.height:.2f} col=({self.red:.1f}, {self.green:.1f}, {self.blue:.1f}, {self.white:.1f}) owned by {self.owner}"
 
 	def release(self):
 		self.owner = None
