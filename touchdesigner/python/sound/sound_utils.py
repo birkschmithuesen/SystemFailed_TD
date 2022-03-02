@@ -56,9 +56,10 @@ class Utils:
 		return
 
 	def SendMagicq(self, message, args):
+		msg = f'/round/{message}'
 		for s in self.magicqSenders:
 			# debug(f'{self.ownerComp} sending osc on {s}:\n {message}, {args}')
-			s.sendOSC(message[0:15], args, asBundle=False, useNonStandardTypes=True)
+			s.sendOSC(msg[0:15], args, asBundle=False, useNonStandardTypes=True)
 		return
 
 	def SendSynth(self, message, args):
@@ -91,21 +92,20 @@ class Utils:
 			msg = f'/round/{subtype}'
 			args = [int(a) for a in arguments]
 			self.SendAbleton(msg, args)
-			self.SendMagicq(msg, args)
 		return
 
 	def SendFreeze(self, subtype, trackid):
 		if self.pars.Freeze.eval():
 			newType = f'freeze/{subtype}'
 			self.SendVoice(newType, [trackid])
-			debug(f"freeze: {newType}, {trackid}")
+			# debug(f"freeze: {newType}, {trackid}")
 		return
 
 	def SendBenched(self, subtype, trackid):
 		if self.pars.Bench.eval():
 			newType = f'benched/{subtype}'
 			self.SendVoice(newType, [trackid])
-			debug(f"bench: {newType}, {trackid}")
+			# debug(f"bench: {newType}, {trackid}")
 		return
 
 	def SendEvaluationStart(self, trigger = 1):
@@ -159,7 +159,7 @@ class Utils:
 			posy = float(synth[self.synthIndex+1,'Positiony'].val or 0)
 			# args.append(posy)
 			op.Sound.SendSynthSingle(pitch, level, posx, posy)
-			debug(self.synthIndex+1)
+			# debug(self.synthIndex+1)
 		# self.SendSynth(f'/synth', args)
 		return
 

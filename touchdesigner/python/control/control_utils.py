@@ -146,4 +146,5 @@ class Utils:
 			op.Sound.SendRound('joker', [0])
 		if not soundRound == '':
 			op.Sound.SendRound(soundRound)
+			op.Sound.SendMagicq(soundRound, [1])
 		
