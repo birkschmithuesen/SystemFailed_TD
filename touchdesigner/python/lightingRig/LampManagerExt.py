@@ -39,7 +39,7 @@ class LampManagerExt(dict):
 			missingAmount = amount - len(requester)
 			for i in range(missingAmount):
 				if mode == 'equal':
-					j0 = (i*math.floor(len(options)/amount))%len(options)
+					j0 = (i*math.floor(len(options)/amount)+13)%len(options)
 				else:
 					j0 = random.randint(0, len(options))
 				lamp = None
