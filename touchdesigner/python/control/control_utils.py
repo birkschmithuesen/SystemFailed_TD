@@ -33,6 +33,7 @@ class Utils:
 		self.GoScene()
 		# self.GoGraphics()
 		self.GoSound()
+		self.GoLight()
 		self.GoTracks()
 		self.GoTimer()
 		self.GoBehavior()
@@ -146,5 +147,9 @@ class Utils:
 			op.Sound.SendRound('joker', [0])
 		if not soundRound == '':
 			op.Sound.SendRound(soundRound)
-			op.Sound.SendMagicq(soundRound, [1])
-		
+
+	def GoLight(self):
+		cue = self.Loaded[1,'cue']
+		event = self.Loaded[1,'lights']
+		op.Guide.SendCue(cue, [1])
+		op.Guide.SendEvent(event)
