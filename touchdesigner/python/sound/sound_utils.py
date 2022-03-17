@@ -74,6 +74,11 @@ class Utils:
 		self.SendMaxmsp(msg, args)
 		return
 
+	def SendSetting(self, subtype):
+		msg = f'/setting/{subtype}'
+		self.SendMaxmsp(msg, [int(1)])
+		return
+
 	def SendIntro(self, name):
 		if self.pars.Intro.eval():
 			msg = f'/intro/{name.lower()}'
@@ -180,10 +185,6 @@ class Utils:
 			self.SendAbleton(f'/soundtrack/{subtype}', [int(trigger), int(fademillis)])
 		return
 
-	def SendTrackfail(self, pitch =1):
-		self.SendAbleton(f'/sound/trackfail', [int(pitch)])
-		return
-
 	# list tracks: [trackid, px, py]
 	def SendZaps(self, tracks):
 		tmp = dict()
@@ -225,7 +226,6 @@ class Utils:
 				zaps.pop(tid)
 			except KeyError:
 				pass
-
 
 	def SendStrobes(self, tracks):
 		tmp = dict()

@@ -31,7 +31,6 @@ class Utils:
 		op.Scene.Load()
 		op.Scene.Go()
 		self.GoScene()
-		# self.GoGraphics()
 		self.GoSound()
 		self.GoLight()
 		self.GoTracks()
@@ -62,12 +61,6 @@ class Utils:
 		target = int(self.pars.Previousindex.eval())
 		self.GoTo(target)
 
-	def EndSkip(self, delay = 15):
-		# self.Pause()
-		# run('op.Control.par.Endround.pulse()', delayFrames = 30*delay)
-		# run('op.Control.Unpause()', delayFrames = 30*delay)
-		pass
-
 	def GoTable(self, ref):
 		table = op(ref)
 		for i in range(1, table.numRows):
@@ -83,7 +76,7 @@ class Utils:
 			pass
 
 	def GoScene(self):
-		self.pars.Timestop = int(self.Loaded[1,'timestop'].val)
+		self.pars.Timestop = int(self.Loaded[1,'stop'].val)
 		for fop in ops('scene_*'):
 			self.GoTable(fop)
 
@@ -124,9 +117,8 @@ class Utils:
 	def GoSound(self):
 		scene = self.Loaded[1,'scene']
 		soundIntro =  str(self.Loaded[1,'soundintro'].val)
-		soundEval = str(self.Loaded[1,'soundeval'].val)
 		soundRound = str(self.Loaded[1,'soundround'].val)
-		soundSynth = (self.Loaded[1,'soundsynth'].val or False)
+		soundSynth = (self.Loaded[1,'synth'].val or False)
 		soundTrack = (self.Loaded[1,'soundtrack'].val or False)
 		op.Sound.SendScene(scene)
 		if soundSynth:
@@ -141,15 +133,18 @@ class Utils:
 			op.Sound.SendSoundtrack()
 		if not soundIntro == '':
 			op.Sound.SendIntro(soundIntro)
-		if not soundEval == '':
-			op.Sound.SendEvaluationStart()
 		if soundRound != 'joker':
 			op.Sound.SendRound('joker', [0])
 		if not soundRound == '':
 			op.Sound.SendRound(soundRound)
 
 	def GoLight(self):
-		cue = self.Loaded[1,'cue']
-		event = self.Loaded[1,'lights']
-		op.Guide.SendCue(cue, [1])
-		op.Guide.SendEvent(event)
+		cue = str(self.Loaded[1,'cue'].val)
+		event = str(self.Loaded[1,'lights'].val)
+		op.Guide.SendCue(cue)
+		if event == '/joker':
+			op.Guide.SendJoker(1)
+		else:
+			op.Guide.SendJoker(0)
+			if event != '':
+				op.Guide.SendEvent(event)
