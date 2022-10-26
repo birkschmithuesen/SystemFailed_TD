@@ -99,6 +99,11 @@ class Utils:
 			self.SendAbleton(msg, args)
 		return
 
+	def SendAblVoiceVol(self, trigger = 1, fademillis = 1000):
+		msg = f'/aivoice/vol'
+		args = [int(trigger), int(fademillis)]
+		self.SendAbleton(msg, args)
+
 	def SendFreeze(self, subtype, trackid):
 		if self.pars.Freeze.eval():
 			newType = f'freeze/{subtype}'
