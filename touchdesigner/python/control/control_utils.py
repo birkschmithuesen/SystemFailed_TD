@@ -131,12 +131,17 @@ class Utils:
 			op.Sound.SendSoundtrack(subtype = args[0], trigger = int(args[1]), fademillis = args[2])
 		else:
 			op.Sound.SendSoundtrack()
-		if not soundIntro == '':
-			op.Sound.SendIntro(soundIntro)
-		if soundRound != 'joker':
+		if (soundIntro == '') and (soundRound == ''):
+			op.Sound.SendAblVoiceVol(trigger = 1, fademillis = 1000)
 			op.Sound.SendRound('joker', [0])
-		if not soundRound == '':
-			op.Sound.SendRound(soundRound)
+		else:			
+			op.Sound.SendAblVoiceVol(trigger = 0, fademillis = 1000)				
+			if not soundIntro == '':
+				op.Sound.SendIntro(soundIntro)
+			if soundRound != 'joker':
+				op.Sound.SendRound('joker', [0])
+			if not soundRound == '':
+				op.Sound.SendRound(soundRound)
 
 	def GoLight(self):
 		cue = str(self.Loaded[1,'cue'].val)
